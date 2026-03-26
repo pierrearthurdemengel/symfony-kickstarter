@@ -15,7 +15,9 @@ final class MediaServeController extends AbstractController
     #[Route('/uploads/{filename}', name: 'api_media_serve', methods: ['GET'])]
     public function __invoke(string $filename): Response
     {
-        $filePath = $this->getParameter('kernel.project_dir') . '/var/uploads/' . $filename;
+        /** @var string $projectDir */
+        $projectDir = $this->getParameter('kernel.project_dir');
+        $filePath = $projectDir . '/var/uploads/' . $filename;
 
         if (!file_exists($filePath)) {
             return $this->json(

@@ -9,6 +9,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
+use Symfony\Component\RateLimiter\RateLimit;
 use Symfony\Component\RateLimiter\RateLimiterFactory;
 
 final readonly class RateLimiterSubscriber implements EventSubscriberInterface
@@ -84,7 +85,7 @@ final readonly class RateLimiterSubscriber implements EventSubscriberInterface
         };
     }
 
-    private function createRateLimitResponse(\Symfony\Component\RateLimiter\RateLimit $limit): JsonResponse
+    private function createRateLimitResponse(RateLimit $limit): JsonResponse
     {
         $retryAfter = $limit->getRetryAfter();
 
@@ -101,7 +102,7 @@ final readonly class RateLimiterSubscriber implements EventSubscriberInterface
         return $response;
     }
 
-    private function addRateLimitHeaders(RequestEvent $event, \Symfony\Component\RateLimiter\RateLimit $limit): void
+    private function addRateLimitHeaders(RequestEvent $event, RateLimit $limit): void
     {
         $event->getRequest()->attributes->set('_rate_limit', [
             'limit' => $limit->getLimit(),

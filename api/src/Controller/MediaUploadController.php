@@ -8,6 +8,7 @@ use App\Entity\MediaObject;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -37,14 +38,13 @@ final class MediaUploadController extends AbstractController
     {
         $file = $request->files->get('file');
 
-        if ($file === null) {
+        if (!$file instanceof UploadedFile) {
             return $this->json(
                 ['error' => 'Aucun fichier envoye. Le champ "file" est requis.'],
                 Response::HTTP_BAD_REQUEST,
             );
         }
 
-        /** @var \Symfony\Component\HttpFoundation\File\UploadedFile $file */
         $mimeType = $file->getMimeType() ?? '';
         if (!\in_array($mimeType, self::ALLOWED_MIME_TYPES, true)) {
             return $this->json(
@@ -62,9 +62,12 @@ final class MediaUploadController extends AbstractController
 
         $originalName = $file->getClientOriginalName();
         $extension = $file->guessExtension() ?? 'bin';
+        $fileSize = (int) $file->getSize();
         $uniqueName = Uuid::v7()->toRfc4122() . '.' . $extension;
 
-        $uploadDir = $this->getParameter('kernel.project_dir') . '/var/uploads';
+        /** @var string $projectDir */
+        $projectDir = $this->getParameter('kernel.project_dir');
+        $uploadDir = $projectDir . '/var/uploads';
         if (!is_dir($uploadDir)) {
             mkdir($uploadDir, 0755, true);
         }
@@ -77,7 +80,7 @@ final class MediaUploadController extends AbstractController
         $media->setFilePath($uniqueName);
         $media->setOriginalName($originalName);
         $media->setMimeType($mimeType);
-        $media->setSize((int) $file->getSize());
+        $media->setSize($fileSize);
         $media->setUploadedBy($user instanceof User ? $user : null);
 
         $this->entityManager->persist($media);

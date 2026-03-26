@@ -104,8 +104,9 @@ final class EmailVerificationController extends AbstractController
         $this->entityManager->persist($token);
         $this->entityManager->flush();
 
-        $verificationUrl = ($this->getParameter('app.frontend_url') ?? 'http://localhost:8080')
-            . '/api/verify-email?token=' . $token->getToken();
+        /** @var string $frontendUrl */
+        $frontendUrl = $this->getParameter('app.frontend_url');
+        $verificationUrl = $frontendUrl . '/api/verify-email?token=' . $token->getToken();
 
         $htmlContent = $this->twig->render('emails/verify_email.html.twig', [
             'user' => $user,

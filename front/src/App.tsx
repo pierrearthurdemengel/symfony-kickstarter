@@ -6,6 +6,7 @@ import ErrorBoundary from '@/components/ErrorBoundary';
 import ToastContainer from '@/components/Ui/ToastContainer';
 import Layout from '@/components/Layout/Layout';
 import ProtectedRoute from '@/components/Auth/ProtectedRoute';
+import AdminRoute from '@/components/Auth/AdminRoute';
 import Home from '@/pages/Home';
 import Login from '@/pages/Login';
 import Register from '@/pages/Register';
@@ -13,6 +14,10 @@ import Dashboard from '@/pages/Dashboard';
 import ForgotPassword from '@/pages/ForgotPassword';
 import ResetPassword from '@/pages/ResetPassword';
 import Profile from '@/pages/Profile';
+import AdminDashboard from '@/pages/admin/AdminDashboard';
+import UsersList from '@/pages/admin/UsersList';
+import UserDetail from '@/pages/admin/UserDetail';
+import UserEdit from '@/pages/admin/UserEdit';
 import NotFound from '@/pages/NotFound';
 
 export default function App() {
@@ -82,6 +87,39 @@ export default function App() {
                         <Profile />
                       </ProtectedRoute>
                     </Layout>
+                  }
+                />
+                {/* Routes admin */}
+                <Route
+                  path="/admin"
+                  element={
+                    <AdminRoute>
+                      <AdminDashboard />
+                    </AdminRoute>
+                  }
+                />
+                <Route
+                  path="/admin/users"
+                  element={
+                    <AdminRoute>
+                      <UsersList />
+                    </AdminRoute>
+                  }
+                />
+                <Route
+                  path="/admin/users/:id"
+                  element={
+                    <AdminRoute>
+                      <UserDetail />
+                    </AdminRoute>
+                  }
+                />
+                <Route
+                  path="/admin/users/:id/edit"
+                  element={
+                    <AdminRoute>
+                      <UserEdit />
+                    </AdminRoute>
                   }
                 />
                 <Route
