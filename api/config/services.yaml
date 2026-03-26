@@ -12,3 +12,8 @@ services:
       - '../src/DependencyInjection/'
       - '../src/Entity/'
       - '../src/Kernel.php'
+
+  # Processor pour le hashage des mots de passe utilisateur
+  App\State\UserHashPasswordProcessor:
+    arguments:
+      $persistProcessor: '@api_platform.doctrine.orm.state.persist_processor'
