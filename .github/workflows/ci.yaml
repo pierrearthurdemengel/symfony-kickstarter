@@ -1,0 +1,147 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+jobs:
+  backend-tests:
+    name: Backend Tests (PHP ${{ matrix.php-version }})
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        php-version: ['8.3']
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: kickstarter_test
+          POSTGRES_USER: kickstarter
+          POSTGRES_PASSWORD: kickstarter
+        ports:
+          - 5432:5432
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+
+    defaults:
+      run:
+        working-directory: api
+
+    env:
+      APP_ENV: test
+      APP_DEBUG: 0
+      DATABASE_URL: 'postgresql://kickstarter:kickstarter@localhost:5432/kickstarter_test?serverVersion=16&charset=utf8'
+      REDIS_URL: 'redis://localhost:6379'
+      JWT_PASSPHRASE: kickstarter
+      MESSENGER_TRANSPORT_DSN: 'doctrine://default?auto_setup=0'
+      MAILER_DSN: 'null://null'
+
+    steps:
+      - name: Checkout du code source
+        uses: actions/checkout@v4
+
+      - name: Installation de PHP ${{ matrix.php-version }}
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          extensions: pdo_pgsql, intl, zip, redis
+          coverage: none
+
+      - name: Cache des dependances Composer
+        uses: actions/cache@v4
+        with:
+          path: api/vendor
+          key: composer-${{ runner.os }}-${{ matrix.php-version }}-${{ hashFiles('api/composer.lock') }}
+          restore-keys: |
+            composer-${{ runner.os }}-${{ matrix.php-version }}-
+
+      - name: Installation des dependances Composer
+        run: composer install --no-interaction --no-progress --prefer-dist
+
+      - name: Generation des cles JWT pour les tests
+        run: |
+          mkdir -p config/jwt
+          openssl genpkey -algorithm RSA -out config/jwt/private.pem -pkeyopt rsa_keygen_bits:4096 -pass pass:kickstarter
+          openssl pkey -in config/jwt/private.pem -out config/jwt/public.pem -pubout -passin pass:kickstarter
+
+      - name: Creation de la base de donnees de test
+        run: php bin/console doctrine:database:create --if-not-exists --env=test
+
+      - name: Execution des migrations
+        run: php bin/console doctrine:migrations:migrate --no-interaction --env=test
+
+      - name: Analyse statique PHPStan
+        run: php vendor/bin/phpstan analyse --no-progress
+
+      - name: Verification du style PHP CS Fixer
+        run: php vendor/bin/php-cs-fixer fix --dry-run --diff
+
+      - name: Tests PHPUnit
+        run: php vendor/bin/phpunit
+
+  frontend-tests:
+    name: Frontend Tests
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: front
+
+    steps:
+      - name: Checkout du code source
+        uses: actions/checkout@v4
+
+      - name: Installation de Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: front/package-lock.json
+
+      - name: Installation des dependances npm
+        run: npm ci
+
+      - name: Verification ESLint
+        run: npm run lint
+
+      - name: Verification Prettier
+        run: npm run format:check
+
+      - name: Verification TypeScript
+        run: npx tsc --noEmit
+
+      - name: Tests Vitest
+        run: npm test
+
+  frontend-build:
+    name: Frontend Build
+    runs-on: ubuntu-latest
+    needs: frontend-tests
+
+    defaults:
+      run:
+        working-directory: front
+
+    steps:
+      - name: Checkout du code source
+        uses: actions/checkout@v4
+
+      - name: Installation de Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: front/package-lock.json
+
+      - name: Installation des dependances npm
+        run: npm ci
+
+      - name: Build de production
+        run: npm run build

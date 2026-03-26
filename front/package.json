@@ -13,7 +13,10 @@
     "format:check": "prettier --check 'src/**/*.{ts,tsx,css}'",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "cypress:open": "cypress open",
+    "cypress:run": "cypress run",
+    "e2e": "cypress run"
   },
   "dependencies": {
     "react": "^18.3.1",
@@ -39,6 +42,7 @@
     "vitest": "^2.0.3",
     "@testing-library/react": "^16.0.0",
     "@testing-library/jest-dom": "^6.4.6",
-    "jsdom": "^24.1.0"
+    "jsdom": "^24.1.0",
+    "cypress": "^13.13.0"
   }
 }
