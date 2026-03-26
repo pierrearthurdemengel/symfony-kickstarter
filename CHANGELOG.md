@@ -4,6 +4,35 @@ Toutes les modifications notables de ce projet sont documentees dans ce fichier.
 
 Le format est base sur [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/).
 
+## [0.3.0] - 2026-03-26
+
+### Ajoute
+
+- Upload de fichiers (entite MediaObject, endpoint multipart, servant de fichiers)
+- Champ avatar sur User (relation MediaObject)
+- Verification email a l'inscription (token 24h, endpoints verify-email et resend-verification)
+- Rate limiting (login 5/min, register 3/h, forgot-password 3/h, API globale 100/min)
+- Subscriber rate limiter avec headers X-RateLimit
+- Interface admin avec sidebar responsive (AdminLayout)
+- AdminRoute (verification ROLE_ADMIN)
+- Page admin dashboard (statistiques, derniers inscrits)
+- Page liste utilisateurs admin (DataTable, recherche, tri, pagination, suppression)
+- Page detail utilisateur admin
+- Page edition utilisateur admin (roles modifiables)
+- Composant FileUpload (drag & drop, preview, barre de progression)
+- Composant Badge (variantes pour roles et statuts)
+- Composant SearchInput (debounce integre)
+- Hook useUsers (CRUD admin avec filtres API Platform)
+- Docker production multi-stage (PHP + React buildes)
+- docker-compose.prod.yaml (stack production sans node/mailpit)
+- Config Nginx production (gzip, cache, HSTS, CSP)
+- Config PHP production (opcache JIT, validate_timestamps off)
+- Workflow GitHub Actions deploy (template sur tag)
+- Configuration Sentry prete a activer (backend + frontend)
+- .env.prod.example documente
+- Commandes Makefile production (prod-build, prod-start, prod-stop, front-build)
+- Tests upload media et verification email
+
 ## [0.2.0] - 2026-03-26
 
 ### Ajoute
