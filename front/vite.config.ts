@@ -14,7 +14,7 @@ export default defineConfig({
     host: true,
     proxy: {
       '/api': {
-        target: process.env.VITE_API_PROXY_TARGET || 'http://php:80',
+        target: process.env.VITE_API_PROXY_TARGET || 'http://nginx:80',
         changeOrigin: true,
       },
     },

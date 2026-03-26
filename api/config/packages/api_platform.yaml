@@ -22,14 +22,9 @@ api_platform:
     extra_properties:
       standard_put: true
       rfc_7807_compliant_errors: true
-
-  # Collection : pagination
-  collection:
-    pagination:
-      items_per_page: 30
-      client_items_per_page: true
-      items_per_page_parameter_name: itemsPerPage
-      maximum_items_per_page: 100
+    pagination_items_per_page: 30
+    pagination_client_items_per_page: true
+    pagination_maximum_items_per_page: 100
 
   # Mapping des entites
   mapping:
@@ -38,10 +33,6 @@ api_platform:
   # Patch avec merge
   patch_formats:
     json: ['application/merge-patch+json']
-
-  # Swagger UI disponible
-  swagger:
-    versions: [3]
 
   # Activer la documentation OpenAPI
   enable_docs: true

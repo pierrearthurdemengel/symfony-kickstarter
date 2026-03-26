@@ -35,12 +35,6 @@ COPY php.ini /usr/local/etc/php/conf.d/php.ini
 # Repertoire de travail
 WORKDIR /var/www/api
 
-# Permissions
-RUN addgroup -g 1000 appuser && adduser -u 1000 -G appuser -s /bin/sh -D appuser
-RUN chown -R appuser:appuser /var/www/api
-
-USER appuser
-
 EXPOSE 9000
 
 CMD ["php-fpm"]
