@@ -4,6 +4,37 @@ Toutes les modifications notables de ce projet sont documentees dans ce fichier.
 
 Le format est base sur [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/).
 
+## [0.4.0] - 2026-03-26
+
+### Ajoute
+
+- Journal d'audit (entite AuditLog, service AuditLogger, repository avec requetes)
+- Endpoints admin (GET /api/admin/stats, GET /api/admin/users/export, GET /api/admin/audit-logs)
+- Export CSV des utilisateurs (endpoint streame avec en-tetes)
+- Commande Symfony app:clean-expired-tokens (nettoyage des tokens expires, option --dry-run)
+- Statistiques avancees dashboard admin (inscriptions/mois, repartition roles, taux verification)
+- Graphiques Recharts dans le dashboard admin (BarChart inscriptions, PieChart roles)
+- Page journal d'audit admin (tableau pagine, badges actions, details JSON expandable)
+- Hook useAdminStats (statistiques + export CSV)
+- Hook useAuditLog (pagination journal d'audit)
+- Bouton export CSV sur dashboard et liste utilisateurs
+- Navigation sidebar : lien journal d'audit
+- Types TypeScript : AdminStats, AuditLogEntry, AuditLogResponse, RegistrationsByMonth
+- Tests AdminControllerTest (stats, export, audit logs, controle ROLE_ADMIN)
+- Tests CleanExpiredTokensCommandTest (dry-run + execution)
+- Commandes Makefile : clean-tokens, clean-tokens-dry, test-coverage
+- Migration audit_log table
+
+### Corrige
+
+- Tests fonctionnels PHPUnit : pattern createClient compatible Symfony 7 (bootKernel supprime)
+- phpunit.xml.dist : suppression APP_ENV=dev qui ecrasait l'environnement de test
+- DataTable : contrainte generique T extends object (au lieu de Record<string, unknown>)
+
+### Securite
+
+- Acces aux endpoints /api/admin restreint a ROLE_ADMIN via access_control
+
 ## [0.3.0] - 2026-03-26
 
 ### Ajoute
