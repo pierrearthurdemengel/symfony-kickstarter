@@ -157,6 +157,18 @@ shell-node: ## Ouvrir un shell dans le container Node
 jwt-generate: ## Generer les cles JWT
 	$(CONSOLE) lexik:jwt:generate-keypair --overwrite
 
+.PHONY: clean-tokens
+clean-tokens: ## Supprimer les tokens expires
+	$(CONSOLE) app:clean-expired-tokens
+
+.PHONY: clean-tokens-dry
+clean-tokens-dry: ## Afficher les tokens expires (sans supprimer)
+	$(CONSOLE) app:clean-expired-tokens --dry-run
+
+.PHONY: test-coverage
+test-coverage: ## Lancer les tests avec couverture de code
+	$(PHP_EXEC) php vendor/bin/phpunit --coverage-text
+
 # ------------------------------------------------------------------
 # Production
 # ------------------------------------------------------------------

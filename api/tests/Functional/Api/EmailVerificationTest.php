@@ -7,6 +7,7 @@ namespace App\Tests\Functional\Api;
 use App\Entity\EmailVerificationToken;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -14,12 +15,12 @@ use Symfony\Component\Uid\Uuid;
 
 final class EmailVerificationTest extends WebTestCase
 {
+    private KernelBrowser $client;
     private EntityManagerInterface $entityManager;
 
     protected function setUp(): void
     {
-        parent::setUp();
-        self::bootKernel();
+        $this->client = self::createClient();
 
         /** @var EntityManagerInterface $em */
         $em = self::getContainer()->get(EntityManagerInterface::class);
@@ -50,10 +51,9 @@ final class EmailVerificationTest extends WebTestCase
     /**
      * Obtention du token JWT.
      */
-    private function getJwtToken(string $email = 'verify@test.dev', string $password = 'password'): string
+    private function getJwtToken(string $email, string $password = 'password'): string
     {
-        $client = self::createClient();
-        $client->request('POST', '/api/login', [], [], [
+        $this->client->request('POST', '/api/login', [], [], [
             'CONTENT_TYPE' => 'application/json',
         ], (string) json_encode([
             'email' => $email,
@@ -61,7 +61,7 @@ final class EmailVerificationTest extends WebTestCase
         ]));
 
         /** @var array{token: string} $response */
-        $response = json_decode((string) $client->getResponse()->getContent(), true);
+        $response = json_decode((string) $this->client->getResponse()->getContent(), true);
 
         return $response['token'];
     }
@@ -69,7 +69,7 @@ final class EmailVerificationTest extends WebTestCase
     /**
      * Creation d'un token de verification.
      */
-    private function createVerificationToken(User $user, string $tokenValue = null, bool $expired = false): EmailVerificationToken
+    private function createVerificationToken(User $user, ?string $tokenValue = null, bool $expired = false): EmailVerificationToken
     {
         $token = new EmailVerificationToken();
         $token->setUser($user);
@@ -91,35 +91,32 @@ final class EmailVerificationTest extends WebTestCase
         $tokenValue = Uuid::v7()->toRfc4122();
         $this->createVerificationToken($user, $tokenValue);
 
-        $client = self::createClient();
-        $client->request('GET', '/api/verify-email?token=' . $tokenValue);
+        $this->client->request('GET', '/api/verify-email?token=' . $tokenValue);
 
         self::assertResponseStatusCodeSame(Response::HTTP_OK);
 
         /** @var array{message: string} $response */
-        $response = json_decode((string) $client->getResponse()->getContent(), true);
+        $response = json_decode((string) $this->client->getResponse()->getContent(), true);
         self::assertSame('Email verifie avec succes.', $response['message']);
     }
 
     public function testVerifyEmailWithInvalidToken(): void
     {
-        $client = self::createClient();
-        $client->request('GET', '/api/verify-email?token=invalid-token-value');
+        $this->client->request('GET', '/api/verify-email?token=invalid-token-value');
 
         self::assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
 
         /** @var array{error: string} $response */
-        $response = json_decode((string) $client->getResponse()->getContent(), true);
+        $response = json_decode((string) $this->client->getResponse()->getContent(), true);
         self::assertArrayHasKey('error', $response);
     }
 
     public function testResendVerificationAuthenticated(): void
     {
-        $user = $this->createTestUser('resend@test.dev');
+        $this->createTestUser('resend@test.dev');
         $token = $this->getJwtToken('resend@test.dev');
 
-        $client = self::createClient();
-        $client->request('POST', '/api/resend-verification', [], [], [
+        $this->client->request('POST', '/api/resend-verification', [], [], [
             'HTTP_AUTHORIZATION' => 'Bearer ' . $token,
             'CONTENT_TYPE' => 'application/json',
         ]);
@@ -127,7 +124,7 @@ final class EmailVerificationTest extends WebTestCase
         self::assertResponseStatusCodeSame(Response::HTTP_OK);
 
         /** @var array{message: string} $response */
-        $response = json_decode((string) $client->getResponse()->getContent(), true);
+        $response = json_decode((string) $this->client->getResponse()->getContent(), true);
         self::assertArrayHasKey('message', $response);
     }
 

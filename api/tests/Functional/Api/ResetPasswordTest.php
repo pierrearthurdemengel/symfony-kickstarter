@@ -7,18 +7,19 @@ namespace App\Tests\Functional\Api;
 use App\Entity\ResetPasswordToken;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 final class ResetPasswordTest extends WebTestCase
 {
+    private KernelBrowser $client;
     private EntityManagerInterface $entityManager;
 
     protected function setUp(): void
     {
-        parent::setUp();
-        self::bootKernel();
+        $this->client = self::createClient();
 
         /** @var EntityManagerInterface $em */
         $em = self::getContainer()->get(EntityManagerInterface::class);
@@ -71,8 +72,7 @@ final class ResetPasswordTest extends WebTestCase
     {
         $this->createTestUser();
 
-        $client = self::createClient();
-        $client->request('POST', '/api/forgot-password', [], [], [
+        $this->client->request('POST', '/api/forgot-password', [], [], [
             'CONTENT_TYPE' => 'application/json',
         ], (string) json_encode([
             'email' => 'reset@test.dev',
@@ -83,8 +83,7 @@ final class ResetPasswordTest extends WebTestCase
 
     public function testForgotPasswordReturns200ForUnknownEmail(): void
     {
-        $client = self::createClient();
-        $client->request('POST', '/api/forgot-password', [], [], [
+        $this->client->request('POST', '/api/forgot-password', [], [], [
             'CONTENT_TYPE' => 'application/json',
         ], (string) json_encode([
             'email' => 'unknown@test.dev',
@@ -98,8 +97,7 @@ final class ResetPasswordTest extends WebTestCase
         $user = $this->createTestUser('resetvalid@test.dev');
         $resetToken = $this->createResetToken($user);
 
-        $client = self::createClient();
-        $client->request('POST', '/api/reset-password', [], [], [
+        $this->client->request('POST', '/api/reset-password', [], [], [
             'CONTENT_TYPE' => 'application/json',
         ], (string) json_encode([
             'token' => $resetToken->getToken(),
@@ -108,7 +106,7 @@ final class ResetPasswordTest extends WebTestCase
 
         self::assertResponseStatusCodeSame(Response::HTTP_OK);
 
-        $response = json_decode((string) $client->getResponse()->getContent(), true);
+        $response = json_decode((string) $this->client->getResponse()->getContent(), true);
         self::assertSame('Mot de passe reinitialise avec succes.', $response['message']);
     }
 
@@ -117,8 +115,7 @@ final class ResetPasswordTest extends WebTestCase
         $user = $this->createTestUser('resetexpired@test.dev');
         $resetToken = $this->createResetToken($user, expired: true);
 
-        $client = self::createClient();
-        $client->request('POST', '/api/reset-password', [], [], [
+        $this->client->request('POST', '/api/reset-password', [], [], [
             'CONTENT_TYPE' => 'application/json',
         ], (string) json_encode([
             'token' => $resetToken->getToken(),
@@ -130,8 +127,7 @@ final class ResetPasswordTest extends WebTestCase
 
     public function testResetPasswordWithInvalidToken(): void
     {
-        $client = self::createClient();
-        $client->request('POST', '/api/reset-password', [], [], [
+        $this->client->request('POST', '/api/reset-password', [], [], [
             'CONTENT_TYPE' => 'application/json',
         ], (string) json_encode([
             'token' => 'invalid_token_value',
@@ -143,8 +139,7 @@ final class ResetPasswordTest extends WebTestCase
 
     public function testResetPasswordWithMissingFields(): void
     {
-        $client = self::createClient();
-        $client->request('POST', '/api/reset-password', [], [], [
+        $this->client->request('POST', '/api/reset-password', [], [], [
             'CONTENT_TYPE' => 'application/json',
         ], (string) json_encode([
             'token' => '',

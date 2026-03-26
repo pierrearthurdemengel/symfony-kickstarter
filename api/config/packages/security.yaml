@@ -47,6 +47,7 @@ security:
     - { path: ^/api/verify-email, roles: PUBLIC_ACCESS, methods: [GET] }
     - { path: ^/uploads, roles: PUBLIC_ACCESS, methods: [GET] }
     - { path: ^/api/docs, roles: PUBLIC_ACCESS }
+    - { path: ^/api/admin, roles: ROLE_ADMIN }
     - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }
 
 when@test:

@@ -13,12 +13,12 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 final class UserTest extends WebTestCase
 {
+    private KernelBrowser $client;
     private EntityManagerInterface $entityManager;
 
     protected function setUp(): void
     {
-        parent::setUp();
-        self::bootKernel();
+        $this->client = self::createClient();
 
         /** @var EntityManagerInterface $em */
         $em = self::getContainer()->get(EntityManagerInterface::class);
@@ -31,7 +31,6 @@ final class UserTest extends WebTestCase
      * @param list<string> $roles
      */
     private function createUserAndGetToken(
-        KernelBrowser $client,
         string $email,
         string $password = 'password',
         array $roles = ['ROLE_USER'],
@@ -49,7 +48,7 @@ final class UserTest extends WebTestCase
         $this->entityManager->persist($user);
         $this->entityManager->flush();
 
-        $client->request('POST', '/api/login', [], [], [
+        $this->client->request('POST', '/api/login', [], [], [
             'CONTENT_TYPE' => 'application/json',
         ], (string) json_encode([
             'email' => $email,
@@ -57,7 +56,7 @@ final class UserTest extends WebTestCase
         ]));
 
         /** @var array{token: string} $response */
-        $response = json_decode((string) $client->getResponse()->getContent(), true);
+        $response = json_decode((string) $this->client->getResponse()->getContent(), true);
 
         return $response['token'];
     }
@@ -75,10 +74,9 @@ final class UserTest extends WebTestCase
 
     public function testGetCollectionAuthenticated(): void
     {
-        $client = self::createClient();
-        $token = $this->createUserAndGetToken($client, 'list@test.dev');
+        $token = $this->createUserAndGetToken('list@test.dev');
 
-        $client->request('GET', '/api/users', [], [], [
+        $this->client->request('GET', '/api/users', [], [], [
             'HTTP_AUTHORIZATION' => 'Bearer ' . $token,
             'HTTP_ACCEPT' => 'application/ld+json',
         ]);
@@ -88,11 +86,10 @@ final class UserTest extends WebTestCase
 
     public function testGetSingleUserAuthenticated(): void
     {
-        $client = self::createClient();
-        $token = $this->createUserAndGetToken($client, 'single@test.dev');
+        $token = $this->createUserAndGetToken('single@test.dev');
         $userId = $this->getUserIdByEmail('single@test.dev');
 
-        $client->request('GET', '/api/users/' . $userId, [], [], [
+        $this->client->request('GET', '/api/users/' . $userId, [], [], [
             'HTTP_AUTHORIZATION' => 'Bearer ' . $token,
             'HTTP_ACCEPT' => 'application/ld+json',
         ]);
@@ -102,10 +99,9 @@ final class UserTest extends WebTestCase
 
     public function testPostUserAsAdmin(): void
     {
-        $client = self::createClient();
-        $token = $this->createUserAndGetToken($client, 'admin@test.dev', 'password', ['ROLE_ADMIN']);
+        $token = $this->createUserAndGetToken('admin@test.dev', 'password', ['ROLE_ADMIN']);
 
-        $client->request('POST', '/api/users', [], [], [
+        $this->client->request('POST', '/api/users', [], [], [
             'HTTP_AUTHORIZATION' => 'Bearer ' . $token,
             'CONTENT_TYPE' => 'application/ld+json',
             'HTTP_ACCEPT' => 'application/ld+json',
@@ -121,11 +117,10 @@ final class UserTest extends WebTestCase
 
     public function testPutUserAsOwner(): void
     {
-        $client = self::createClient();
-        $token = $this->createUserAndGetToken($client, 'owner@test.dev');
+        $token = $this->createUserAndGetToken('owner@test.dev');
         $userId = $this->getUserIdByEmail('owner@test.dev');
 
-        $client->request('PUT', '/api/users/' . $userId, [], [], [
+        $this->client->request('PUT', '/api/users/' . $userId, [], [], [
             'HTTP_AUTHORIZATION' => 'Bearer ' . $token,
             'CONTENT_TYPE' => 'application/ld+json',
             'HTTP_ACCEPT' => 'application/ld+json',
@@ -140,8 +135,7 @@ final class UserTest extends WebTestCase
 
     public function testDeleteUserAsAdmin(): void
     {
-        $client = self::createClient();
-        $token = $this->createUserAndGetToken($client, 'deleteadmin@test.dev', 'password', ['ROLE_ADMIN']);
+        $token = $this->createUserAndGetToken('deleteadmin@test.dev', 'password', ['ROLE_ADMIN']);
 
         // Creation d'un utilisateur a supprimer
         /** @var UserPasswordHasherInterface $hasher */
@@ -159,7 +153,7 @@ final class UserTest extends WebTestCase
 
         $deleteUserId = (string) $userToDelete->getId();
 
-        $client->request('DELETE', '/api/users/' . $deleteUserId, [], [], [
+        $this->client->request('DELETE', '/api/users/' . $deleteUserId, [], [], [
             'HTTP_AUTHORIZATION' => 'Bearer ' . $token,
             'HTTP_ACCEPT' => 'application/ld+json',
         ]);
@@ -169,8 +163,7 @@ final class UserTest extends WebTestCase
 
     public function testGetCollectionUnauthenticated(): void
     {
-        $client = self::createClient();
-        $client->request('GET', '/api/users');
+        $this->client->request('GET', '/api/users');
 
         self::assertResponseStatusCodeSame(Response::HTTP_UNAUTHORIZED);
     }

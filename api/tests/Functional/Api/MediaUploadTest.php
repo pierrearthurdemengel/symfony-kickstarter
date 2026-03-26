@@ -6,6 +6,7 @@ namespace App\Tests\Functional\Api;
 
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Response;
@@ -13,12 +14,12 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 final class MediaUploadTest extends WebTestCase
 {
+    private KernelBrowser $client;
     private EntityManagerInterface $entityManager;
 
     protected function setUp(): void
     {
-        parent::setUp();
-        self::bootKernel();
+        $this->client = self::createClient();
 
         /** @var EntityManagerInterface $em */
         $em = self::getContainer()->get(EntityManagerInterface::class);
@@ -43,8 +44,7 @@ final class MediaUploadTest extends WebTestCase
         $this->entityManager->persist($user);
         $this->entityManager->flush();
 
-        $client = self::createClient();
-        $client->request('POST', '/api/login', [], [], [
+        $this->client->request('POST', '/api/login', [], [], [
             'CONTENT_TYPE' => 'application/json',
         ], (string) json_encode([
             'email' => $email,
@@ -52,7 +52,7 @@ final class MediaUploadTest extends WebTestCase
         ]));
 
         /** @var array{token: string} $response */
-        $response = json_decode((string) $client->getResponse()->getContent(), true);
+        $response = json_decode((string) $this->client->getResponse()->getContent(), true);
 
         return $response['token'];
     }
@@ -78,15 +78,14 @@ final class MediaUploadTest extends WebTestCase
         $token = $this->createTestUserAndGetToken();
         $file = $this->createTestImage();
 
-        $client = self::createClient();
-        $client->request('POST', '/api/media', [], ['file' => $file], [
+        $this->client->request('POST', '/api/media', [], ['file' => $file], [
             'HTTP_AUTHORIZATION' => 'Bearer ' . $token,
         ]);
 
         self::assertResponseStatusCodeSame(Response::HTTP_CREATED);
 
         /** @var array<string, mixed> $response */
-        $response = json_decode((string) $client->getResponse()->getContent(), true);
+        $response = json_decode((string) $this->client->getResponse()->getContent(), true);
         self::assertArrayHasKey('id', $response);
         self::assertArrayHasKey('filePath', $response);
         self::assertArrayHasKey('originalName', $response);
@@ -100,15 +99,14 @@ final class MediaUploadTest extends WebTestCase
         // Fichier de 11 Mo (depasse la limite de 10 Mo)
         $file = $this->createTestImage('large.jpg', 'image/jpeg', 11 * 1024);
 
-        $client = self::createClient();
-        $client->request('POST', '/api/media', [], ['file' => $file], [
+        $this->client->request('POST', '/api/media', [], ['file' => $file], [
             'HTTP_AUTHORIZATION' => 'Bearer ' . $token,
         ]);
 
         self::assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
 
         /** @var array{error: string} $response */
-        $response = json_decode((string) $client->getResponse()->getContent(), true);
+        $response = json_decode((string) $this->client->getResponse()->getContent(), true);
         self::assertArrayHasKey('error', $response);
     }
 
@@ -117,15 +115,14 @@ final class MediaUploadTest extends WebTestCase
         $token = $this->createTestUserAndGetToken('media-type@test.dev');
         $file = $this->createTestImage('script.exe', 'application/x-executable');
 
-        $client = self::createClient();
-        $client->request('POST', '/api/media', [], ['file' => $file], [
+        $this->client->request('POST', '/api/media', [], ['file' => $file], [
             'HTTP_AUTHORIZATION' => 'Bearer ' . $token,
         ]);
 
         self::assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
 
         /** @var array{error: string} $response */
-        $response = json_decode((string) $client->getResponse()->getContent(), true);
+        $response = json_decode((string) $this->client->getResponse()->getContent(), true);
         self::assertArrayHasKey('error', $response);
     }
 
@@ -133,8 +130,7 @@ final class MediaUploadTest extends WebTestCase
     {
         $file = $this->createTestImage();
 
-        $client = self::createClient();
-        $client->request('POST', '/api/media', [], ['file' => $file]);
+        $this->client->request('POST', '/api/media', [], ['file' => $file]);
 
         self::assertResponseStatusCodeSame(Response::HTTP_UNAUTHORIZED);
     }
