@@ -113,6 +113,24 @@ chore(docker): upgrader PostgreSQL vers 17
 test(api): ajouter les tests du UserVoter
 ```
 
+## Hooks pre-commit automatiques
+
+Le projet utilise **Husky** et **lint-staged** pour executer automatiquement des verifications avant chaque commit :
+
+- **pre-commit** : `lint-staged` corrige automatiquement le code modifie
+  - Fichiers PHP (`api/src/**/*.php`) : PHP CS Fixer via Docker
+  - Fichiers TypeScript (`front/src/**/*.{ts,tsx}`) : ESLint + Prettier
+  - Fichiers CSS (`front/src/**/*.css`) : Prettier
+- **commit-msg** : `commitlint` valide que le message de commit respecte le format Conventional Commits
+
+Les hooks sont installes automatiquement par `make install`. Pour les reinstaller manuellement :
+
+```bash
+make install-hooks
+```
+
+Si un hook echoue, corrigez les erreurs signalees puis relancez votre commit. Ne desactivez jamais les hooks (`--no-verify`) sauf cas exceptionnel valide par l'equipe.
+
 ## Convention de code
 
 ### Backend (PHP)

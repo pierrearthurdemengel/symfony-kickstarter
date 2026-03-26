@@ -47,6 +47,7 @@ La commande `make install` execute les etapes suivantes :
 4. Creation de la base de donnees PostgreSQL
 5. Execution des migrations Doctrine
 6. Installation des dependances frontend (npm)
+7. Installation des hooks Git (Husky, lint-staged, commitlint)
 
 Apres l'installation, charger les fixtures et generer les cles JWT :
 
@@ -82,6 +83,7 @@ make jwt-generate
 | `make install` | Installer le projet complet |
 | `make install-back` | Installer les dependances backend (Composer) |
 | `make install-front` | Installer les dependances frontend (npm) |
+| `make install-hooks` | Installer les hooks Git (Husky) |
 
 ### Developpement
 
@@ -102,6 +104,8 @@ make jwt-generate
 | `make db-migrate` | Executer les migrations |
 | `make db-fixtures` | Charger les fixtures |
 | `make db-reset` | Reinitialiser la base (drop + create + migrate + fixtures) |
+| `make db-backup` | Sauvegarder la base de donnees |
+| `make db-restore FILE=backup.sql` | Restaurer la base de donnees depuis un fichier |
 
 ### Tests et qualite
 
@@ -113,6 +117,8 @@ make jwt-generate
 | `make lint` | Lancer tous les linters |
 | `make lint-back` | Lancer PHPStan + PHP CS Fixer |
 | `make lint-front` | Lancer ESLint |
+| `make check` | Lancer tous les checks (lint + tests) |
+| `make fix` | Corriger automatiquement le code (CS Fixer + ESLint + Prettier) |
 
 ### Utilitaires
 
@@ -122,6 +128,27 @@ make jwt-generate
 | `make shell-node` | Ouvrir un shell dans le container Node |
 | `make jwt-generate` | Generer les cles JWT |
 | `make help` | Afficher l'aide (liste des commandes) |
+
+### Hooks Git et conventions de commit
+
+Le projet utilise [Husky](https://typicode.github.io/husky/) pour executer automatiquement des hooks Git :
+
+- **pre-commit** : lance `lint-staged` pour corriger automatiquement le code modifie (PHP CS Fixer, ESLint, Prettier)
+- **commit-msg** : valide le message de commit via `commitlint` (format [Conventional Commits](https://www.conventionalcommits.org/fr/v1.0.0/))
+
+Les hooks sont installes automatiquement via `make install`. Pour les installer manuellement :
+
+```bash
+make install-hooks
+```
+
+Format attendu des messages de commit :
+
+```
+<type>(<scope>): <description>
+```
+
+Types autorises : `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `chore`, `perf`, `ci`, `revert`, `security`.
 
 ## Architecture
 

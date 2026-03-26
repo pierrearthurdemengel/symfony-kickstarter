@@ -1,0 +1,26 @@
+{
+  "name": "symfony-kickstarter",
+  "private": true,
+  "version": "0.2.0",
+  "scripts": {
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "husky": "^9.1.0",
+    "@commitlint/cli": "^19.3.0",
+    "@commitlint/config-conventional": "^19.2.0",
+    "lint-staged": "^15.2.0"
+  },
+  "lint-staged": {
+    "api/src/**/*.php": [
+      "docker compose exec -T php php vendor/bin/php-cs-fixer fix --config=.php-cs-fixer.dist.php"
+    ],
+    "front/src/**/*.{ts,tsx}": [
+      "cd front && npx eslint --fix",
+      "cd front && npx prettier --write"
+    ],
+    "front/src/**/*.css": [
+      "cd front && npx prettier --write"
+    ]
+  }
+}

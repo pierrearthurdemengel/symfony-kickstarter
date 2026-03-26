@@ -27,6 +27,7 @@ install: ## Installer le projet complet
 	$(DOCKER_COMPOSE) up -d
 	$(MAKE) install-back
 	$(MAKE) install-front
+	$(MAKE) install-hooks
 
 .PHONY: install-back
 install-back: ## Installer les dependances back (Composer)
@@ -37,6 +38,11 @@ install-back: ## Installer les dependances back (Composer)
 .PHONY: install-front
 install-front: ## Installer les dependances front (npm)
 	$(NODE_EXEC) npm install
+
+.PHONY: install-hooks
+install-hooks: ## Installer les hooks Git (Husky)
+	npm install
+	npx husky
 
 # ------------------------------------------------------------------
 # Developpement
@@ -90,6 +96,15 @@ db-reset: ## Reinitialiser la base (drop + create + migrate + fixtures)
 	$(CONSOLE) doctrine:migrations:migrate --no-interaction
 	$(CONSOLE) doctrine:fixtures:load --no-interaction
 
+.PHONY: db-backup
+db-backup: ## Sauvegarder la base de donnees
+	$(DOCKER_COMPOSE) exec database pg_dump -U kickstarter kickstarter > backup_$(shell date +%Y%m%d_%H%M%S).sql
+	@echo "Backup cree : backup_$(shell date +%Y%m%d_%H%M%S).sql"
+
+.PHONY: db-restore
+db-restore: ## Restaurer la base de donnees (usage: make db-restore FILE=backup.sql)
+	$(DOCKER_COMPOSE) exec -T database psql -U kickstarter kickstarter < $(FILE)
+
 # ------------------------------------------------------------------
 # Qualite du code
 # ------------------------------------------------------------------
@@ -116,6 +131,15 @@ lint-back: ## Lancer les linters back (PHPStan + CS Fixer)
 .PHONY: lint-front
 lint-front: ## Lancer les linters front
 	$(NODE_EXEC) npm run lint
+
+.PHONY: check
+check: lint test ## Lancer tous les checks (lint + tests)
+
+.PHONY: fix
+fix: ## Corriger automatiquement le code (CS Fixer + ESLint + Prettier)
+	$(PHP_EXEC) php vendor/bin/php-cs-fixer fix
+	$(NODE_EXEC) npm run lint:fix
+	$(NODE_EXEC) npm run format
 
 # ------------------------------------------------------------------
 # Utilitaires
