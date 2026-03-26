@@ -35,7 +35,7 @@ export default function Home() {
   return (
     <div>
       {/* Section hero */}
-      <section className="bg-gradient-to-br from-primary-600 to-primary-800 py-20 text-white">
+      <section className="bg-gradient-to-br from-primary-600 to-primary-800 py-20 text-white dark:from-primary-800 dark:to-primary-950">
         <div className="mx-auto max-w-7xl px-4 text-center sm:px-6 lg:px-8">
           <h1 className="mb-6 text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl">
             Symfony Kickstarter
@@ -99,13 +99,13 @@ export default function Home() {
       </section>
 
       {/* Section fonctionnalites */}
-      <section className="py-20">
+      <section className="py-20 dark:bg-gray-900">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="mb-16 text-center">
-            <h2 className="mb-4 text-3xl font-bold text-secondary-900 sm:text-4xl">
+            <h2 className="mb-4 text-3xl font-bold text-secondary-900 sm:text-4xl dark:text-white">
               Tout inclus, pret a l&apos;emploi
             </h2>
-            <p className="mx-auto max-w-2xl text-lg text-secondary-600">
+            <p className="mx-auto max-w-2xl text-lg text-secondary-600 dark:text-gray-400">
               Un stack technique complet et moderne pour demarrer vos projets web rapidement.
             </p>
           </div>
@@ -114,11 +114,11 @@ export default function Home() {
             {features.map((feature) => (
               <div
                 key={feature.title}
-                className="rounded-xl bg-white p-6 shadow-md transition-shadow hover:shadow-lg"
+                className="rounded-xl bg-white p-6 shadow-md transition-shadow hover:shadow-lg dark:bg-gray-800"
               >
-                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-primary-100">
+                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-primary-100 dark:bg-primary-900/40">
                   <svg
-                    className="h-6 w-6 text-primary-600"
+                    className="h-6 w-6 text-primary-600 dark:text-primary-400"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -127,8 +127,12 @@ export default function Home() {
                     <path strokeLinecap="round" strokeLinejoin="round" d={feature.icon} />
                   </svg>
                 </div>
-                <h3 className="mb-2 text-lg font-semibold text-secondary-900">{feature.title}</h3>
-                <p className="text-sm text-secondary-600">{feature.description}</p>
+                <h3 className="mb-2 text-lg font-semibold text-secondary-900 dark:text-white">
+                  {feature.title}
+                </h3>
+                <p className="text-sm text-secondary-600 dark:text-gray-400">
+                  {feature.description}
+                </p>
               </div>
             ))}
           </div>

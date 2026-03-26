@@ -6,13 +6,9 @@ interface LayoutProps {
   children: ReactNode;
 }
 
-/**
- * Wrapper principal avec Header, contenu et Footer
- * Utilise flex column min-h-screen pour coller le footer en bas
- */
 export default function Layout({ children }: LayoutProps) {
   return (
-    <div className="flex min-h-screen flex-col bg-secondary-50">
+    <div className="flex min-h-screen flex-col bg-secondary-50 dark:bg-gray-900">
       <Header />
       <main className="flex-1">{children}</main>
       <Footer />

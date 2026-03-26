@@ -16,5 +16,4 @@ framework:
       failed: 'doctrine://default?queue_name=failed'
 
     routing:
-      # Ajouter ici les messages a traiter de maniere asynchrone
-      # 'App\Message\MonMessage': async
+      'App\Message\SendWelcomeEmailMessage': async

@@ -1,82 +1,80 @@
-import { useState, type FormEvent } from 'react';
 import { Link } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useAuth } from '@/hooks/useAuth';
+import { useToast } from '@/hooks/useToast';
+import { loginSchema, type LoginFormData } from '@/lib/validations';
 import Button from '@/components/Ui/Button';
 import Input from '@/components/Ui/Input';
-import Alert from '@/components/Ui/Alert';
 import type { ApiError } from '@/types';
 
 export default function LoginForm() {
   const { login } = useAuth();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const { addToast } = useToast();
 
-  // Validation et soumission du formulaire
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
-    setError(null);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<LoginFormData>({
+    resolver: zodResolver(loginSchema),
+  });
 
-    // Validation cote client
-    if (!email.trim()) {
-      setError("L'email est requis.");
-      return;
-    }
-    if (!password) {
-      setError('Le mot de passe est requis.');
-      return;
-    }
-
-    setIsLoading(true);
+  // Soumission du formulaire de connexion
+  const onSubmit = async (data: LoginFormData) => {
     try {
-      await login({ email, password });
+      await login({ email: data.email, password: data.password });
+      addToast('success', 'Connexion reussie.');
     } catch (err) {
       const apiError = err as ApiError;
-      setError(apiError.message || 'Erreur lors de la connexion.');
-    } finally {
-      setIsLoading(false);
+      addToast('error', apiError.message || 'Erreur lors de la connexion.');
     }
   };
 
   return (
     <div className="mx-auto w-full max-w-md">
-      <div className="rounded-xl bg-white p-8 shadow-lg">
-        <h2 className="mb-6 text-center text-2xl font-bold text-secondary-900">Connexion</h2>
+      <div className="rounded-xl bg-white p-8 shadow-lg dark:bg-gray-800">
+        <h2 className="mb-6 text-center text-2xl font-bold text-secondary-900 dark:text-white">
+          Connexion
+        </h2>
 
-        {error && (
-          <div className="mb-4">
-            <Alert type="error" message={error} onClose={() => setError(null)} />
-          </div>
-        )}
-
-        <form onSubmit={handleSubmit} noValidate>
+        <form onSubmit={handleSubmit(onSubmit)} noValidate>
           <Input
             label="Email"
-            name="email"
             type="email"
             placeholder="vous@exemple.com"
             required
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            error={errors.email?.message}
+            {...register('email')}
           />
           <Input
             label="Mot de passe"
-            name="password"
             type="password"
             placeholder="Votre mot de passe"
             required
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            error={errors.password?.message}
+            {...register('password')}
           />
-          <Button type="submit" isLoading={isLoading} className="mt-2 w-full">
+          <Button type="submit" isLoading={isSubmitting} className="mt-2 w-full">
             Se connecter
           </Button>
         </form>
 
-        <p className="mt-4 text-center text-sm text-secondary-600">
+        <p className="mt-4 text-center text-sm text-secondary-600 dark:text-gray-400">
+          <Link
+            to="/forgot-password"
+            className="font-medium text-primary-600 hover:text-primary-500 dark:text-primary-400"
+          >
+            Mot de passe oublie ?
+          </Link>
+        </p>
+
+        <p className="mt-2 text-center text-sm text-secondary-600 dark:text-gray-400">
           Pas encore de compte ?{' '}
-          <Link to="/register" className="font-medium text-primary-600 hover:text-primary-500">
+          <Link
+            to="/register"
+            className="font-medium text-primary-600 hover:text-primary-500 dark:text-primary-400"
+          >
             Creer un compte
           </Link>
         </p>

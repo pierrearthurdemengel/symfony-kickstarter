@@ -1,3 +1,5 @@
+import type { ReactNode } from 'react';
+
 // Types pour l'entite User
 export interface User {
   id: string;
@@ -7,6 +9,7 @@ export interface User {
   roles: string[];
   createdAt: string;
   updatedAt: string;
+  lastLoginAt: string | null;
 }
 
 // Types pour l'authentification
@@ -26,6 +29,27 @@ export interface AuthResponse {
   token: string;
 }
 
+// Types pour le reset de mot de passe
+export interface ResetPasswordRequest {
+  email: string;
+}
+
+export interface ResetPasswordConfirm {
+  token: string;
+  password: string;
+}
+
+// Types pour la mise a jour du profil
+export interface UpdateProfileData {
+  firstName: string;
+  lastName: string;
+}
+
+export interface ChangePasswordData {
+  currentPassword: string;
+  newPassword: string;
+}
+
 // Types pour les reponses API Platform (Hydra)
 export interface HydraCollection<T> {
   '@context': string;
@@ -39,4 +63,27 @@ export interface HydraCollection<T> {
 export interface ApiError {
   message: string;
   status: number;
+}
+
+// Types pour la pagination
+export interface PaginationMeta {
+  currentPage: number;
+  totalPages: number;
+  totalItems: number;
+  itemsPerPage: number;
+}
+
+// Types pour les colonnes de DataTable
+export interface Column<T> {
+  key: keyof T | string;
+  label: string;
+  sortable?: boolean;
+  render?: (item: T) => ReactNode;
+}
+
+// Types pour les toasts
+export interface ToastMessage {
+  id: string;
+  type: 'success' | 'error' | 'warning' | 'info';
+  message: string;
 }

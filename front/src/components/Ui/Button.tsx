@@ -16,13 +16,13 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 // Classes CSS selon la variante
 const variantClasses: Record<ButtonVariant, string> = {
   primary:
-    'bg-primary-600 text-white hover:bg-primary-700 focus:ring-primary-500 disabled:bg-primary-300',
+    'bg-primary-600 text-white hover:bg-primary-700 focus:ring-primary-500 disabled:bg-primary-300 dark:bg-primary-500 dark:hover:bg-primary-600 dark:disabled:bg-primary-800',
   secondary:
-    'bg-secondary-600 text-white hover:bg-secondary-700 focus:ring-secondary-500 disabled:bg-secondary-300',
+    'bg-secondary-600 text-white hover:bg-secondary-700 focus:ring-secondary-500 disabled:bg-secondary-300 dark:bg-secondary-500 dark:hover:bg-secondary-600 dark:disabled:bg-secondary-800',
   danger:
-    'bg-danger-600 text-white hover:bg-danger-700 focus:ring-danger-500 disabled:bg-danger-300',
+    'bg-danger-600 text-white hover:bg-danger-700 focus:ring-danger-500 disabled:bg-danger-300 dark:bg-danger-500 dark:hover:bg-danger-600 dark:disabled:bg-danger-800',
   outline:
-    'border-2 border-primary-600 text-primary-600 hover:bg-primary-50 focus:ring-primary-500 disabled:border-primary-300 disabled:text-primary-300',
+    'border-2 border-primary-600 text-primary-600 hover:bg-primary-50 focus:ring-primary-500 disabled:border-primary-300 disabled:text-primary-300 dark:border-primary-400 dark:text-primary-400 dark:hover:bg-primary-900/20',
 };
 
 // Classes CSS selon la taille
@@ -49,6 +49,7 @@ export default function Button({
         inline-flex items-center justify-center rounded-lg font-medium
         transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2
         disabled:cursor-not-allowed
+        dark:focus:ring-offset-gray-800
         ${variantClasses[variant]}
         ${sizeClasses[size]}
         ${className}

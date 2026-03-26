@@ -1,7 +1,7 @@
 {
   "name": "symfony-kickstarter-front",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.2.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -19,9 +19,12 @@
     "e2e": "cypress run"
   },
   "dependencies": {
+    "@hookform/resolvers": "^3.9.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "react-router-dom": "^6.26.0"
+    "react-hook-form": "^7.52.0",
+    "react-router-dom": "^6.26.0",
+    "zod": "^3.23.0"
   },
   "devDependencies": {
     "@types/react": "^18.3.3",

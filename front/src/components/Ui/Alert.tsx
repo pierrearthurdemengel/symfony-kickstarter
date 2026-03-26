@@ -9,17 +9,21 @@ interface AlertProps {
 
 // Styles selon le type d'alerte
 const alertStyles: Record<AlertType, string> = {
-  success: 'bg-success-50 border-success-500 text-success-800',
-  error: 'bg-danger-50 border-danger-500 text-danger-800',
-  warning: 'bg-yellow-50 border-yellow-500 text-yellow-800',
-  info: 'bg-primary-50 border-primary-500 text-primary-800',
+  success:
+    'bg-success-50 border-success-500 text-success-800 dark:bg-success-900/30 dark:border-success-600 dark:text-success-300',
+  error:
+    'bg-danger-50 border-danger-500 text-danger-800 dark:bg-danger-900/30 dark:border-danger-600 dark:text-danger-300',
+  warning:
+    'bg-yellow-50 border-yellow-500 text-yellow-800 dark:bg-yellow-900/30 dark:border-yellow-600 dark:text-yellow-300',
+  info: 'bg-primary-50 border-primary-500 text-primary-800 dark:bg-primary-900/30 dark:border-primary-600 dark:text-primary-300',
 };
 
 // Icones SVG selon le type d'alerte
 const alertIcons: Record<AlertType, string> = {
   success: 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z',
   error: 'M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z',
-  warning: 'M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z',
+  warning:
+    'M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z',
   info: 'M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z',
 };
 

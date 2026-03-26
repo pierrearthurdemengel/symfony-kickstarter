@@ -37,6 +37,8 @@ security:
     - { path: ^/api/login, roles: PUBLIC_ACCESS }
     - { path: ^/api/register, roles: PUBLIC_ACCESS, methods: [POST] }
     - { path: ^/api/healthcheck, roles: PUBLIC_ACCESS }
+    - { path: ^/api/forgot-password, roles: PUBLIC_ACCESS, methods: [POST] }
+    - { path: ^/api/reset-password, roles: PUBLIC_ACCESS, methods: [POST] }
     - { path: ^/api/docs, roles: PUBLIC_ACCESS }
     - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }
 
