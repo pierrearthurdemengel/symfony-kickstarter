@@ -1,0 +1,91 @@
+services:
+  nginx:
+    image: nginx:1.25-alpine
+    container_name: kickstarter-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    volumes:
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./api/public:/var/www/api/public:ro
+    depends_on:
+      - php
+      - node
+    networks:
+      - kickstarter
+
+  php:
+    build:
+      context: ./docker/php
+      dockerfile: Dockerfile
+    container_name: kickstarter-php
+    restart: unless-stopped
+    volumes:
+      - ./api:/var/www/api
+    depends_on:
+      - database
+      - redis
+    environment:
+      APP_ENV: dev
+      APP_DEBUG: 1
+      DATABASE_URL: "postgresql://kickstarter:kickstarter@database:5432/kickstarter?serverVersion=16&charset=utf8"
+      MAILER_DSN: "smtp://mailpit:1025"
+      REDIS_URL: "redis://redis:6379"
+    networks:
+      - kickstarter
+
+  node:
+    build:
+      context: ./docker/node
+      dockerfile: Dockerfile
+    container_name: kickstarter-node
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./front:/var/www/front
+      - front_node_modules:/var/www/front/node_modules
+    networks:
+      - kickstarter
+
+  database:
+    image: postgres:16-alpine
+    container_name: kickstarter-database
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: kickstarter
+      POSTGRES_USER: kickstarter
+      POSTGRES_PASSWORD: kickstarter
+    volumes:
+      - database_data:/var/lib/postgresql/data
+    networks:
+      - kickstarter
+
+  redis:
+    image: redis:7-alpine
+    container_name: kickstarter-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    networks:
+      - kickstarter
+
+  mailpit:
+    image: axllent/mailpit
+    container_name: kickstarter-mailpit
+    restart: unless-stopped
+    ports:
+      - "8025:8025"
+      - "1025:1025"
+    networks:
+      - kickstarter
+
+volumes:
+  database_data:
+  front_node_modules:
+
+networks:
+  kickstarter:
+    driver: bridge

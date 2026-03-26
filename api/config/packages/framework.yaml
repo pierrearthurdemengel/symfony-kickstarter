@@ -1,0 +1,32 @@
+# Configuration du framework Symfony
+framework:
+  secret: '%env(APP_SECRET)%'
+  handle_all_throwables: true
+
+  http_method_override: false
+
+  # Configuration PHP session
+  session:
+    handler_id: null
+    cookie_secure: auto
+    cookie_samesite: lax
+    storage_factory_id: session.storage.factory.native
+
+  php_errors:
+    log: true
+
+  # Validation par attributs PHP
+  validation:
+    email_validation_mode: html5
+
+  # Serialisation
+  serializer:
+    mapping:
+      paths:
+        - '%kernel.project_dir%/config/serialization/'
+
+when@test:
+  framework:
+    test: true
+    session:
+      storage_factory_id: session.storage.factory.mock_file

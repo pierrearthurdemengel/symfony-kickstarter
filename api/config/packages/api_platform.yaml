@@ -1,0 +1,47 @@
+# Configuration API Platform
+api_platform:
+  title: 'Kickstarter API'
+  description: 'API du projet Symfony Kickstarter'
+  version: '1.0.0'
+
+  # Formats de reponse
+  formats:
+    jsonld: ['application/ld+json']
+    json: ['application/json']
+
+  # Documentation
+  docs_formats:
+    jsonld: ['application/ld+json']
+    jsonopenapi: ['application/vnd.openapi+json']
+    html: ['text/html']
+
+  defaults:
+    stateless: true
+    cache_headers:
+      vary: ['Content-Type', 'Authorization', 'Origin']
+    extra_properties:
+      standard_put: true
+      rfc_7807_compliant_errors: true
+
+  # Collection : pagination
+  collection:
+    pagination:
+      items_per_page: 30
+      client_items_per_page: true
+      items_per_page_parameter_name: itemsPerPage
+      maximum_items_per_page: 100
+
+  # Mapping des entites
+  mapping:
+    paths: ['%kernel.project_dir%/src/Entity']
+
+  # Patch avec merge
+  patch_formats:
+    json: ['application/merge-patch+json']
+
+  # Swagger UI disponible
+  swagger:
+    versions: [3]
+
+  # Activer la documentation OpenAPI
+  enable_docs: true

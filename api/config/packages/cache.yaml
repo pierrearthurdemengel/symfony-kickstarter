@@ -1,0 +1,13 @@
+# Configuration du cache
+framework:
+  cache:
+    # Adapter Redis pour le cache applicatif
+    app: cache.adapter.redis
+    default_redis_provider: '%env(REDIS_URL)%'
+
+    # Pools de cache specifiques
+    pools:
+      doctrine.result_cache_pool:
+        adapter: cache.app
+      doctrine.system_cache_pool:
+        adapter: cache.system

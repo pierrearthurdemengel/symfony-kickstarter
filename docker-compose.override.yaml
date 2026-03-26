@@ -1,0 +1,18 @@
+services:
+  php:
+    build:
+      args:
+        XDEBUG_ENABLED: 1
+    environment:
+      # Configuration Xdebug
+      XDEBUG_MODE: debug,coverage
+      XDEBUG_CONFIG: >-
+        client_host=host.docker.internal
+        client_port=9003
+        start_with_request=trigger
+      PHP_IDE_CONFIG: "serverName=kickstarter"
+    volumes:
+      - ./api:/var/www/api
+      - ./docker/php/php.ini:/usr/local/etc/php/conf.d/php.ini:ro
+    extra_hosts:
+      - "host.docker.internal:host-gateway"

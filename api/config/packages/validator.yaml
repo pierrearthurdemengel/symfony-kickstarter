@@ -1,0 +1,9 @@
+# Configuration du validateur
+framework:
+  validation:
+    # Activer la validation par attributs PHP
+    enable_attributes: true
+
+    # En mode strict, les annotations non reconnues declenchent une exception
+    static_method:
+      - loadValidatorMetadata
