@@ -24,10 +24,47 @@ export interface User {
   lastLoginAt: string | null;
 }
 
-// Statistiques du dashboard admin
+// Statistiques avancees du dashboard admin
 export interface AdminStats {
   totalUsers: number;
-  recentUsers: User[];
+  verifiedUsers: number;
+  verificationRate: number;
+  registrationsByMonth: RegistrationsByMonth[];
+  roleDistribution: Record<string, number>;
+  auditCounts: AuditActionCount[];
+}
+
+// Inscriptions par mois (graphique)
+export interface RegistrationsByMonth {
+  month: string;
+  count: number;
+}
+
+// Comptage des actions d'audit
+export interface AuditActionCount {
+  action: string;
+  total: number;
+}
+
+// Entree du journal d'audit
+export interface AuditLogEntry {
+  id: string;
+  action: string;
+  entityType: string;
+  entityId: string | null;
+  changes: Record<string, unknown>;
+  performedBy: string | null;
+  ipAddress: string | null;
+  createdAt: string;
+}
+
+// Reponse paginee du journal d'audit
+export interface AuditLogResponse {
+  items: AuditLogEntry[];
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
 }
 
 // Types pour l'authentification

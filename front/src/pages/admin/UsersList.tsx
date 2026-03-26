@@ -8,6 +8,7 @@ import Badge from '@/components/Ui/Badge';
 import Modal from '@/components/Ui/Modal';
 import Button from '@/components/Ui/Button';
 import { useUsers } from '@/hooks/useUsers';
+import { useAdminStats } from '@/hooks/useAdminStats';
 import { useToast } from '@/hooks/useToast';
 import type { User, Column } from '@/types';
 
@@ -21,6 +22,7 @@ const roleBadgeVariant = (role: string) => {
 export default function UsersList() {
   const navigate = useNavigate();
   const { addToast } = useToast();
+  const { exportCsv } = useAdminStats();
   const {
     users,
     currentPage,
@@ -226,13 +228,29 @@ export default function UsersList() {
         { label: 'Utilisateurs' },
       ]}
     >
-      {/* Barre de recherche */}
-      <div className="mb-6">
+      {/* Barre de recherche + export */}
+      <div className="mb-6 flex items-center gap-4">
+        <div className="flex-1">
         <SearchInput
           value={search}
           onChange={handleSearch}
           placeholder="Rechercher par email, prenom, nom..."
         />
+        </div>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={async () => {
+            try {
+              await exportCsv();
+              addToast('success', 'Export CSV telecharge.');
+            } catch {
+              addToast('error', "Erreur lors de l'export.");
+            }
+          }}
+        >
+          Export CSV
+        </Button>
       </div>
 
       {/* Tableau */}

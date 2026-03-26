@@ -29,7 +29,7 @@ function SkeletonRows({ columns, count = 5 }: { columns: number; count?: number 
   );
 }
 
-export default function DataTable<T extends Record<string, unknown>>({
+export default function DataTable<T extends object>({
   data,
   columns,
   onSort,

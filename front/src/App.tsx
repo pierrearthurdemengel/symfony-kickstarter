@@ -18,6 +18,7 @@ import AdminDashboard from '@/pages/admin/AdminDashboard';
 import UsersList from '@/pages/admin/UsersList';
 import UserDetail from '@/pages/admin/UserDetail';
 import UserEdit from '@/pages/admin/UserEdit';
+import AuditLog from '@/pages/admin/AuditLog';
 import NotFound from '@/pages/NotFound';
 
 export default function App() {
@@ -119,6 +120,14 @@ export default function App() {
                   element={
                     <AdminRoute>
                       <UserEdit />
+                    </AdminRoute>
+                  }
+                />
+                <Route
+                  path="/admin/audit-log"
+                  element={
+                    <AdminRoute>
+                      <AuditLog />
                     </AdminRoute>
                   }
                 />
