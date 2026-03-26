@@ -3,7 +3,8 @@ api/.env.local
 api/.env.local.php
 api/.env.*.local
 api/vendor/
-api/var/
+api/var/*
+!api/var/uploads/
 api/public/bundles/
 api/config/secrets/prod/prod.decrypt.private.php
 

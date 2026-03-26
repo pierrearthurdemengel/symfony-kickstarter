@@ -26,6 +26,7 @@ use Symfony\Component\Uid\Uuid;
             normalizationContext: ['groups' => ['media:read']],
         ),
         new Post(
+            uriTemplate: '/media',
             controller: MediaUploadController::class,
             normalizationContext: ['groups' => ['media:read']],
             deserialize: false,

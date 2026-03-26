@@ -12,7 +12,6 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Uid\Uuid;
 
 final class MediaUploadController extends AbstractController
@@ -33,7 +32,6 @@ final class MediaUploadController extends AbstractController
     ) {
     }
 
-    #[Route('/api/media', name: 'api_media_upload', methods: ['POST'])]
     public function __invoke(Request $request): JsonResponse
     {
         $file = $request->files->get('file');
