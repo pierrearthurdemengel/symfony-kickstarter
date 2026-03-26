@@ -7,8 +7,8 @@
 
 | Couche | Technologie | Version |
 |---|---|---|
-| Backend | PHP / Symfony | 8.3 / 7.1 |
-| API | API Platform | 4.x |
+| Backend | PHP / Symfony | 8.3 / 7.2+ |
+| API | API Platform | 3.4 |
 | Auth | JWT (LexikJWTAuthenticationBundle) | 3.x |
 | Frontend | React + TypeScript | 18+ / 5.x |
 | Build | Vite | 5.x |
@@ -34,7 +34,7 @@
 ## Installation
 
 ```bash
-git clone https://github.com/votre-utilisateur/symfony-kickstarter.git
+git clone https://github.com/pierrearthurdemengel/symfony-kickstarter.git
 cd symfony-kickstarter
 make install
 ```
@@ -59,9 +59,12 @@ make jwt-generate
 
 | Service | URL |
 |---|---|
-| Frontend | [http://localhost:3000](http://localhost:3000) |
-| API (docs Swagger) | [http://localhost/api](http://localhost/api) |
-| Mailpit | [http://localhost:8025](http://localhost:8025) |
+| Frontend (via Nginx) | [http://localhost:8080](http://localhost:8080) |
+| Frontend (Vite direct) | [http://localhost:3010](http://localhost:3010) |
+| API (docs Swagger) | [http://localhost:8080/api](http://localhost:8080/api) |
+| Mailpit | [http://localhost:8026](http://localhost:8026) |
+
+> Les ports sont configurables via des variables d'environnement dans un fichier `.env` a la racine ou en ligne de commande (ex: `NGINX_PORT=80 docker compose up -d`). Ports par defaut : Nginx 8080, Node 3010, PostgreSQL 5433, Redis 6380, Mailpit 8026/1026.
 
 ## Comptes de test
 
