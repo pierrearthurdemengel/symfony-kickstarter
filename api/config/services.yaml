@@ -1,5 +1,6 @@
 # Configuration des services
 parameters:
+  app.frontend_url: '%env(default::FRONTEND_URL)%'
 
 services:
   _defaults:
@@ -17,3 +18,11 @@ services:
   App\State\UserHashPasswordProcessor:
     arguments:
       $persistProcessor: '@api_platform.doctrine.orm.state.persist_processor'
+
+  # Subscriber de rate limiting
+  App\EventSubscriber\RateLimiterSubscriber:
+    arguments:
+      $loginLimiter: '@limiter.login_limiter'
+      $registerLimiter: '@limiter.register_limiter'
+      $forgotPasswordLimiter: '@limiter.forgot_password_limiter'
+      $apiLimiter: '@limiter.api_limiter'

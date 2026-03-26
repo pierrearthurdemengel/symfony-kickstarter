@@ -1,0 +1,23 @@
+# Configuration du rate limiting
+framework:
+    rate_limiter:
+        # Limite sur le login : 5 tentatives par minute par IP
+        login_limiter:
+            policy: sliding_window
+            limit: 5
+            interval: '1 minute'
+        # Limite sur le register : 3 inscriptions par heure par IP
+        register_limiter:
+            policy: sliding_window
+            limit: 3
+            interval: '1 hour'
+        # Limite sur forgot-password : 3 par heure par IP
+        forgot_password_limiter:
+            policy: sliding_window
+            limit: 3
+            interval: '1 hour'
+        # Limite globale API : 100 requetes par minute
+        api_limiter:
+            policy: sliding_window
+            limit: 100
+            interval: '1 minute'

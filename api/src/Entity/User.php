@@ -116,6 +116,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Groups(['user:read'])]
     private ?\DateTimeImmutable $lastLoginAt = null;
 
+    #[ORM\ManyToOne(targetEntity: MediaObject::class)]
+    #[ORM\JoinColumn(nullable: true)]
+    #[Groups(['user:read', 'user:write'])]
+    private ?MediaObject $avatar = null;
+
+    #[ORM\Column(type: 'boolean', options: ['default' => false])]
+    #[Groups(['user:read'])]
+    private bool $isEmailVerified = false;
+
     public function getId(): ?Uuid
     {
         return $this->id;
@@ -236,6 +245,30 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setLastLoginAt(?\DateTimeImmutable $lastLoginAt): static
     {
         $this->lastLoginAt = $lastLoginAt;
+
+        return $this;
+    }
+
+    public function getAvatar(): ?MediaObject
+    {
+        return $this->avatar;
+    }
+
+    public function setAvatar(?MediaObject $avatar): static
+    {
+        $this->avatar = $avatar;
+
+        return $this;
+    }
+
+    public function isEmailVerified(): bool
+    {
+        return $this->isEmailVerified;
+    }
+
+    public function setIsEmailVerified(bool $isEmailVerified): static
+    {
+        $this->isEmailVerified = $isEmailVerified;
 
         return $this;
     }

@@ -1,5 +1,15 @@
 import type { ReactNode } from 'react';
 
+// Types pour l'objet media
+export interface MediaObject {
+  id: string;
+  filePath: string;
+  originalName: string;
+  mimeType: string;
+  size: number;
+  createdAt: string;
+}
+
 // Types pour l'entite User
 export interface User {
   id: string;
@@ -7,9 +17,17 @@ export interface User {
   firstName: string | null;
   lastName: string | null;
   roles: string[];
+  avatar: MediaObject | null;
+  isEmailVerified: boolean;
   createdAt: string;
   updatedAt: string;
   lastLoginAt: string | null;
+}
+
+// Statistiques du dashboard admin
+export interface AdminStats {
+  totalUsers: number;
+  recentUsers: User[];
 }
 
 // Types pour l'authentification
@@ -50,6 +68,16 @@ export interface ChangePasswordData {
   newPassword: string;
 }
 
+// Types pour la vue de pagination Hydra
+export interface HydraView {
+  '@id': string;
+  '@type': string;
+  'hydra:first'?: string;
+  'hydra:last'?: string;
+  'hydra:next'?: string;
+  'hydra:previous'?: string;
+}
+
 // Types pour les reponses API Platform (Hydra)
 export interface HydraCollection<T> {
   '@context': string;
@@ -57,6 +85,7 @@ export interface HydraCollection<T> {
   '@type': string;
   'hydra:totalItems': number;
   'hydra:member': T[];
+  'hydra:view'?: HydraView;
 }
 
 // Types pour les erreurs API

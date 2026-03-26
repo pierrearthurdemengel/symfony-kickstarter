@@ -45,6 +45,10 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
+### Uploads (fichiers uploades) ###
+api/var/uploads/*
+!api/var/uploads/.gitkeep
+
 ### Divers ###
 *.phar
 .phpunit.result.cache

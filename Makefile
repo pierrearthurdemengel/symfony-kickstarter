@@ -156,3 +156,27 @@ shell-node: ## Ouvrir un shell dans le container Node
 .PHONY: jwt-generate
 jwt-generate: ## Generer les cles JWT
 	$(CONSOLE) lexik:jwt:generate-keypair --overwrite
+
+# ------------------------------------------------------------------
+# Production
+# ------------------------------------------------------------------
+
+.PHONY: prod-build
+prod-build: ## Construire les images de production
+	docker compose -f docker-compose.prod.yaml build
+
+.PHONY: prod-start
+prod-start: ## Demarrer en mode production
+	docker compose -f docker-compose.prod.yaml up -d
+
+.PHONY: prod-stop
+prod-stop: ## Arreter la production
+	docker compose -f docker-compose.prod.yaml down
+
+.PHONY: prod-logs
+prod-logs: ## Logs de production
+	docker compose -f docker-compose.prod.yaml logs -f
+
+.PHONY: front-build
+front-build: ## Build le frontend pour la production
+	$(NODE_EXEC) npm run build

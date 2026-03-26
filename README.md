@@ -129,6 +129,16 @@ make jwt-generate
 | `make jwt-generate` | Generer les cles JWT |
 | `make help` | Afficher l'aide (liste des commandes) |
 
+### Production
+
+| Commande | Description |
+|---|---|
+| `make prod-build` | Construire les images de production |
+| `make prod-start` | Demarrer en mode production |
+| `make prod-stop` | Arreter la production |
+| `make prod-logs` | Afficher les logs de production |
+| `make front-build` | Build le frontend pour la production |
+
 ### Hooks Git et conventions de commit
 
 Le projet utilise [Husky](https://typicode.github.io/husky/) pour executer automatiquement des hooks Git :
@@ -190,11 +200,23 @@ symfony-kickstarter/
 │   └── vite.config.ts
 ├── docker/
 │   ├── nginx/                    # Configuration Nginx
+│   │   ├── default.conf          # Config Nginx dev
+│   │   ├── default.prod.conf     # Config Nginx production
+│   │   └── spa.conf              # Config Nginx SPA standalone
 │   ├── node/                     # Dockerfile Node
+│   │   ├── Dockerfile            # Dev (Vite dev server)
+│   │   └── Dockerfile.prod       # Production (multi-stage build)
 │   └── php/                      # Dockerfile PHP 8.3 FPM
-├── .github/workflows/            # CI GitHub Actions
-├── docker-compose.yaml           # Services principaux
+│       ├── Dockerfile            # Dev (avec Xdebug optionnel)
+│       ├── Dockerfile.prod       # Production (multi-stage build)
+│       ├── php.ini               # Config PHP dev
+│       └── php.prod.ini          # Config PHP production (OPcache, JIT)
+├── .github/workflows/            # CI/CD GitHub Actions
+│   ├── ci.yaml                   # Tests et qualite
+│   └── deploy.yaml               # Deploiement (template)
+├── docker-compose.yaml           # Services dev
 ├── docker-compose.override.yaml  # Overrides dev (Xdebug)
+├── docker-compose.prod.yaml      # Services production
 ├── Makefile                      # Commandes du projet
 └── init.sh                       # Script d'initialisation du template
 ```
@@ -232,6 +254,57 @@ symfony-kickstarter/
 - Makefile avec 20+ commandes organisees par categorie
 - CI GitHub Actions
 - Qualite code : PHPStan level 8, PHP CS Fixer (PSR-12), ESLint, Prettier
+
+## Deploiement en production
+
+### Construire les images
+
+```bash
+make prod-build
+```
+
+Cette commande construit l'image PHP de production via un multi-stage build (Composer + FPM optimise, sans Xdebug).
+
+### Configurer les variables d'environnement
+
+1. Copier le fichier d'exemple :
+   ```bash
+   cp api/.env.prod.example api/.env.local
+   ```
+2. Remplir toutes les valeurs (base de donnees, secrets, JWT, CORS, etc.)
+3. Generer un `APP_SECRET` securise :
+   ```bash
+   openssl rand -hex 32
+   ```
+4. Generer les cles JWT :
+   ```bash
+   make jwt-generate
+   ```
+
+### Demarrer la stack production
+
+```bash
+make prod-start
+```
+
+### Commandes production disponibles
+
+| Commande | Description |
+|---|---|
+| `make prod-build` | Construire les images de production |
+| `make prod-start` | Demarrer en mode production |
+| `make prod-stop` | Arreter la production |
+| `make prod-logs` | Afficher les logs de production |
+| `make front-build` | Build le frontend pour la production |
+
+### Rappels de securite
+
+- Changer tous les secrets par defaut (`APP_SECRET`, `JWT_PASSPHRASE`, `POSTGRES_PASSWORD`)
+- Utiliser HTTPS en production (configurer un reverse proxy ou un certificat SSL)
+- Restreindre le CORS au domaine de production uniquement
+- Ne jamais exposer les ports de la base de donnees ou de Redis
+- Activer Sentry pour le monitoring d'erreurs (voir `api/config/packages/sentry.yaml` et `front/src/lib/sentry.ts`)
+- Verifier que `APP_DEBUG=0` et `APP_ENV=prod`
 
 ## Personnalisation
 

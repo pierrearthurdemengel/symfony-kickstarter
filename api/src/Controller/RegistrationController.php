@@ -23,6 +23,7 @@ final class RegistrationController extends AbstractController
         private readonly UserPasswordHasherInterface $passwordHasher,
         private readonly ValidatorInterface $validator,
         private readonly MessageBusInterface $messageBus,
+        private readonly EmailVerificationController $emailVerificationController,
     ) {
     }
 
@@ -62,6 +63,9 @@ final class RegistrationController extends AbstractController
         $this->entityManager->flush();
 
         $this->messageBus->dispatch(new SendWelcomeEmailMessage((string) $user->getId()));
+
+        // Envoi de l'email de verification
+        $this->emailVerificationController->createAndSendVerificationToken($user);
 
         return $this->json([
             'id' => (string) $user->getId(),

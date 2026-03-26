@@ -49,6 +49,13 @@ export const changePasswordSchema = z
     path: ['confirmPassword'],
   });
 
+// Schema de validation pour l'edition admin d'un utilisateur
+export const adminUserEditSchema = z.object({
+  firstName: z.string().min(1, 'Prenom requis'),
+  lastName: z.string().min(1, 'Nom requis'),
+  roles: z.array(z.string()).min(1, 'Au moins un role requis'),
+});
+
 // Types inferes depuis les schemas
 export type LoginFormData = z.infer<typeof loginSchema>;
 export type RegisterFormData = z.infer<typeof registerSchema>;
@@ -56,3 +63,4 @@ export type ForgotPasswordFormData = z.infer<typeof forgotPasswordSchema>;
 export type ResetPasswordFormData = z.infer<typeof resetPasswordSchema>;
 export type ProfileFormData = z.infer<typeof profileSchema>;
 export type ChangePasswordFormData = z.infer<typeof changePasswordSchema>;
+export type AdminUserEditFormData = z.infer<typeof adminUserEditSchema>;
