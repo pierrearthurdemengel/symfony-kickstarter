@@ -26,7 +26,7 @@ jobs:
         run: docker build -f docker/php/Dockerfile.prod -t kickstarter-php:pr-${{ github.event.pull_request.number }} .
 
       - name: Installation de Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: 20
           cache: 'npm'
