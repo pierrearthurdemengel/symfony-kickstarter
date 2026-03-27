@@ -169,6 +169,18 @@ clean-tokens-dry: ## Afficher les tokens expires (sans supprimer)
 test-coverage: ## Lancer les tests avec couverture de code
 	$(PHP_EXEC) php vendor/bin/phpunit --coverage-text
 
+.PHONY: messenger-consume
+messenger-consume: ## Lancer le worker Messenger
+	$(CONSOLE) messenger:consume async -vv
+
+.PHONY: messenger-failed
+messenger-failed: ## Consulter les messages echoues
+	$(CONSOLE) messenger:failed:show
+
+.PHONY: messenger-retry
+messenger-retry: ## Relancer les messages echoues
+	$(CONSOLE) messenger:failed:retry
+
 # ------------------------------------------------------------------
 # Production
 # ------------------------------------------------------------------

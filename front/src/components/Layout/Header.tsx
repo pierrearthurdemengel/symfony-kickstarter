@@ -1,10 +1,14 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/hooks/useAuth';
 import DarkModeToggle from '@/components/Ui/DarkModeToggle';
+import LanguageSwitcher from '@/components/Ui/LanguageSwitcher';
+import NotificationBell from '@/components/Ui/NotificationBell';
 import Dropdown from '@/components/Ui/Dropdown';
 
 export default function Header() {
+  const { t } = useTranslation();
   const { isAuthenticated, user, logout } = useAuth();
   const navigate = useNavigate();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -32,7 +36,7 @@ export default function Header() {
   // Items du dropdown utilisateur
   const userMenuItems = [
     {
-      label: 'Mon profil',
+      label: t('nav.profile'),
       onClick: () => navigate('/profile'),
       icon: (
         <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -41,7 +45,7 @@ export default function Header() {
       ),
     },
     {
-      label: 'Dashboard',
+      label: t('nav.dashboard'),
       onClick: () => navigate('/dashboard'),
       icon: (
         <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -49,11 +53,20 @@ export default function Header() {
         </svg>
       ),
     },
+    {
+      label: t('nav.notifications'),
+      onClick: () => navigate('/notifications'),
+      icon: (
+        <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
+        </svg>
+      ),
+    },
     // Lien admin conditionnel
     ...(isAdmin
       ? [
           {
-            label: 'Admin',
+            label: t('nav.admin'),
             onClick: () => navigate('/admin'),
             icon: (
               <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -64,7 +77,7 @@ export default function Header() {
         ]
       : []),
     {
-      label: 'Deconnexion',
+      label: t('nav.logout'),
       onClick: handleLogout,
       danger: true,
       icon: (
@@ -91,36 +104,40 @@ export default function Header() {
           </Link>
 
           {/* Navigation desktop */}
-          <div className="hidden items-center space-x-4 md:flex">
+          <div className="hidden items-center space-x-2 md:flex">
             <Link
               to="/"
               className="rounded-md px-3 py-2 text-sm font-medium text-secondary-600 hover:text-primary-600 dark:text-gray-300 dark:hover:text-primary-400"
             >
-              Home
+              {t('nav.home')}
             </Link>
+            <LanguageSwitcher />
             <DarkModeToggle />
             {isAuthenticated ? (
-              <Dropdown
-                trigger={
-                  <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary-100 text-sm font-bold text-primary-600 dark:bg-primary-900/40 dark:text-primary-400">
-                    {initials}
-                  </div>
-                }
-                items={userMenuItems}
-              />
+              <>
+                <NotificationBell />
+                <Dropdown
+                  trigger={
+                    <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary-100 text-sm font-bold text-primary-600 dark:bg-primary-900/40 dark:text-primary-400">
+                      {initials}
+                    </div>
+                  }
+                  items={userMenuItems}
+                />
+              </>
             ) : (
               <>
                 <Link
                   to="/login"
                   className="rounded-md px-3 py-2 text-sm font-medium text-secondary-600 hover:text-primary-600 dark:text-gray-300 dark:hover:text-primary-400"
                 >
-                  Login
+                  {t('nav.login')}
                 </Link>
                 <Link
                   to="/register"
                   className="rounded-lg bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-700"
                 >
-                  Register
+                  {t('nav.register')}
                 </Link>
               </>
             )}
@@ -128,7 +145,9 @@ export default function Header() {
 
           {/* Bouton hamburger mobile */}
           <div className="flex items-center space-x-2 md:hidden">
+            <LanguageSwitcher />
             <DarkModeToggle />
+            {isAuthenticated && <NotificationBell />}
             <button
               className="inline-flex items-center justify-center rounded-md p-2 text-secondary-600 hover:text-primary-600 dark:text-gray-300 dark:hover:text-primary-400"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -167,7 +186,7 @@ export default function Header() {
                 className="block rounded-md px-3 py-2 text-base font-medium text-secondary-600 hover:bg-secondary-50 hover:text-primary-600 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-primary-400"
                 onClick={closeMenu}
               >
-                Home
+                {t('nav.home')}
               </Link>
               {isAuthenticated ? (
                 <>
@@ -176,14 +195,21 @@ export default function Header() {
                     className="block rounded-md px-3 py-2 text-base font-medium text-secondary-600 hover:bg-secondary-50 hover:text-primary-600 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-primary-400"
                     onClick={closeMenu}
                   >
-                    Mon profil
+                    {t('nav.profile')}
                   </Link>
                   <Link
                     to="/dashboard"
                     className="block rounded-md px-3 py-2 text-base font-medium text-secondary-600 hover:bg-secondary-50 hover:text-primary-600 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-primary-400"
                     onClick={closeMenu}
                   >
-                    Dashboard
+                    {t('nav.dashboard')}
+                  </Link>
+                  <Link
+                    to="/notifications"
+                    className="block rounded-md px-3 py-2 text-base font-medium text-secondary-600 hover:bg-secondary-50 hover:text-primary-600 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-primary-400"
+                    onClick={closeMenu}
+                  >
+                    {t('nav.notifications')}
                   </Link>
                   {isAdmin && (
                     <Link
@@ -191,14 +217,14 @@ export default function Header() {
                       className="block rounded-md px-3 py-2 text-base font-medium text-secondary-600 hover:bg-secondary-50 hover:text-primary-600 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-primary-400"
                       onClick={closeMenu}
                     >
-                      Admin
+                      {t('nav.admin')}
                     </Link>
                   )}
                   <button
                     onClick={handleLogout}
                     className="block w-full rounded-md px-3 py-2 text-left text-base font-medium text-secondary-600 hover:bg-secondary-50 hover:text-danger-600 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-danger-400"
                   >
-                    Deconnexion
+                    {t('nav.logout')}
                   </button>
                 </>
               ) : (
@@ -208,14 +234,14 @@ export default function Header() {
                     className="block rounded-md px-3 py-2 text-base font-medium text-secondary-600 hover:bg-secondary-50 hover:text-primary-600 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-primary-400"
                     onClick={closeMenu}
                   >
-                    Login
+                    {t('nav.login')}
                   </Link>
                   <Link
                     to="/register"
                     className="block rounded-md px-3 py-2 text-base font-medium text-secondary-600 hover:bg-secondary-50 hover:text-primary-600 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-primary-400"
                     onClick={closeMenu}
                   >
-                    Register
+                    {t('nav.register')}
                   </Link>
                 </>
               )}

@@ -1,0 +1,42 @@
+# Traductions francaises
+auth:
+  login_success: "Connexion reussie."
+  login_failed: "Identifiants invalides."
+  register_success: "Compte cree avec succes."
+  logout_success: "Deconnexion reussie."
+  token_expired: "Le token a expire."
+  token_invalid: "Le token est invalide."
+  unauthorized: "Authentification requise."
+  forbidden: "Acces interdit."
+
+user:
+  not_found: "Utilisateur introuvable."
+  email_already_exists: "Un compte existe deja avec cet email."
+  password_too_short: "Le mot de passe doit contenir au moins 8 caracteres."
+  profile_updated: "Profil mis a jour."
+  password_changed: "Mot de passe modifie avec succes."
+
+email:
+  verification_sent: "Un email de verification a ete envoye."
+  verification_success: "Email verifie avec succes."
+  verification_failed: "La verification a echoue."
+  already_verified: "L'email est deja verifie."
+
+password:
+  forgot_email_sent: "Si un compte existe avec cet email, un lien de reinitialisation a ete envoye."
+  reset_success: "Mot de passe reinitialise avec succes."
+  reset_token_invalid: "Le lien de reinitialisation est invalide ou a expire."
+
+notification:
+  not_found: "Notification introuvable."
+  marked_read: "Notification marquee comme lue."
+  all_marked_read: "%count% notification(s) marquee(s) comme lue(s)."
+  deleted: "Notification supprimee."
+  welcome_title: "Bienvenue !"
+  welcome_message: "Votre compte a ete cree avec succes. Pensez a verifier votre email."
+
+rate_limit:
+  exceeded: "Trop de requetes. Veuillez reessayer dans quelques instants."
+
+admin:
+  export_success: "Export CSV genere."

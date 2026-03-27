@@ -1,0 +1,148 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "back": "Back",
+    "confirm": "Confirm",
+    "search": "Search...",
+    "noResults": "No results",
+    "actions": "Actions",
+    "yes": "Yes",
+    "no": "No",
+    "close": "Close",
+    "export": "Export CSV"
+  },
+  "nav": {
+    "home": "Home",
+    "login": "Login",
+    "register": "Register",
+    "dashboard": "Dashboard",
+    "profile": "My profile",
+    "admin": "Admin",
+    "logout": "Logout",
+    "notifications": "Notifications"
+  },
+  "home": {
+    "title": "Symfony Kickstarter",
+    "subtitle": "Production-ready project template: Symfony 7 + API Platform + React/TypeScript + Docker.",
+    "getStarted": "Get started",
+    "viewDocs": "Documentation"
+  },
+  "auth": {
+    "loginTitle": "Login",
+    "registerTitle": "Create an account",
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Confirm password",
+    "firstName": "First name",
+    "lastName": "Last name",
+    "loginButton": "Sign in",
+    "registerButton": "Create account",
+    "forgotPassword": "Forgot password?",
+    "noAccount": "Don't have an account?",
+    "hasAccount": "Already have an account?",
+    "loginLink": "Sign in",
+    "registerLink": "Create an account",
+    "loginSuccess": "Login successful.",
+    "registerSuccess": "Account created successfully.",
+    "logoutSuccess": "Logged out successfully."
+  },
+  "forgotPassword": {
+    "title": "Forgot password",
+    "description": "Enter your email to receive a reset link.",
+    "submit": "Send reset link",
+    "success": "If an account exists with this email, a reset link has been sent.",
+    "backToLogin": "Back to login"
+  },
+  "resetPassword": {
+    "title": "Reset password",
+    "newPassword": "New password",
+    "confirmPassword": "Confirm password",
+    "submit": "Reset password",
+    "success": "Password reset successfully.",
+    "tokenInvalid": "The reset link is invalid or has expired."
+  },
+  "profile": {
+    "title": "My profile",
+    "personalInfo": "Personal information",
+    "changePassword": "Change password",
+    "currentPassword": "Current password",
+    "newPassword": "New password",
+    "updateSuccess": "Profile updated.",
+    "passwordSuccess": "Password changed successfully."
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "welcome": "Welcome, {{name}}!"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "empty": "No notifications",
+    "markAllRead": "Mark all as read",
+    "markRead": "Mark as read",
+    "unread": "{{count}} unread",
+    "viewAll": "View all notifications",
+    "types": {
+      "info": "Information",
+      "success": "Success",
+      "warning": "Warning",
+      "error": "Error"
+    }
+  },
+  "admin": {
+    "dashboard": {
+      "title": "Dashboard",
+      "totalUsers": "Users",
+      "verifiedEmails": "Verified emails",
+      "verificationRate": "Verification rate",
+      "admins": "Admins",
+      "registrationsByMonth": "Registrations by month",
+      "roleDistribution": "Role distribution",
+      "recentUsers": "Recent users",
+      "viewAll": "View all"
+    },
+    "users": {
+      "title": "Users",
+      "email": "Email",
+      "name": "Name",
+      "roles": "Roles",
+      "verified": "Verified",
+      "createdAt": "Registered",
+      "lastLogin": "Last login",
+      "actions": "Actions",
+      "deleteConfirm": "Confirm deletion of this user?",
+      "editTitle": "Edit user",
+      "detailTitle": "User detail"
+    },
+    "auditLog": {
+      "title": "Audit log",
+      "action": "Action",
+      "entity": "Entity",
+      "performedBy": "By",
+      "ip": "IP",
+      "date": "Date",
+      "details": "Details"
+    },
+    "nav": {
+      "dashboard": "Dashboard",
+      "users": "Users",
+      "auditLog": "Audit log",
+      "notifications": "Notifications"
+    }
+  },
+  "errors": {
+    "notFound": "Page not found",
+    "notFoundDescription": "The page you are looking for does not exist.",
+    "backHome": "Back to home",
+    "serverError": "Server error",
+    "networkError": "Network error. Check your connection.",
+    "unauthorized": "Authentication required.",
+    "forbidden": "Access denied."
+  },
+  "footer": {
+    "madeWith": "Built with Symfony, React, and TypeScript"
+  }
+}

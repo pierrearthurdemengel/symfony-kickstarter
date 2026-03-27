@@ -1,0 +1,42 @@
+# English translations
+auth:
+  login_success: "Login successful."
+  login_failed: "Invalid credentials."
+  register_success: "Account created successfully."
+  logout_success: "Logout successful."
+  token_expired: "The token has expired."
+  token_invalid: "The token is invalid."
+  unauthorized: "Authentication required."
+  forbidden: "Access denied."
+
+user:
+  not_found: "User not found."
+  email_already_exists: "An account already exists with this email."
+  password_too_short: "Password must be at least 8 characters."
+  profile_updated: "Profile updated."
+  password_changed: "Password changed successfully."
+
+email:
+  verification_sent: "A verification email has been sent."
+  verification_success: "Email verified successfully."
+  verification_failed: "Verification failed."
+  already_verified: "Email is already verified."
+
+password:
+  forgot_email_sent: "If an account exists with this email, a reset link has been sent."
+  reset_success: "Password reset successfully."
+  reset_token_invalid: "The reset link is invalid or has expired."
+
+notification:
+  not_found: "Notification not found."
+  marked_read: "Notification marked as read."
+  all_marked_read: "%count% notification(s) marked as read."
+  deleted: "Notification deleted."
+  welcome_title: "Welcome!"
+  welcome_message: "Your account has been created successfully. Please verify your email."
+
+rate_limit:
+  exceeded: "Too many requests. Please try again later."
+
+admin:
+  export_success: "CSV export generated."

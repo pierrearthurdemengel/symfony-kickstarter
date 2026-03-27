@@ -1,0 +1,148 @@
+{
+  "common": {
+    "loading": "Chargement...",
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "back": "Retour",
+    "confirm": "Confirmer",
+    "search": "Rechercher...",
+    "noResults": "Aucun resultat",
+    "actions": "Actions",
+    "yes": "Oui",
+    "no": "Non",
+    "close": "Fermer",
+    "export": "Exporter CSV"
+  },
+  "nav": {
+    "home": "Accueil",
+    "login": "Connexion",
+    "register": "Inscription",
+    "dashboard": "Tableau de bord",
+    "profile": "Mon profil",
+    "admin": "Admin",
+    "logout": "Deconnexion",
+    "notifications": "Notifications"
+  },
+  "home": {
+    "title": "Symfony Kickstarter",
+    "subtitle": "Template de projet pret a cloner : Symfony 7 + API Platform + React/TypeScript + Docker.",
+    "getStarted": "Commencer",
+    "viewDocs": "Documentation"
+  },
+  "auth": {
+    "loginTitle": "Connexion",
+    "registerTitle": "Creer un compte",
+    "email": "Email",
+    "password": "Mot de passe",
+    "confirmPassword": "Confirmer le mot de passe",
+    "firstName": "Prenom",
+    "lastName": "Nom",
+    "loginButton": "Se connecter",
+    "registerButton": "Creer mon compte",
+    "forgotPassword": "Mot de passe oublie ?",
+    "noAccount": "Pas encore de compte ?",
+    "hasAccount": "Deja un compte ?",
+    "loginLink": "Se connecter",
+    "registerLink": "Creer un compte",
+    "loginSuccess": "Connexion reussie.",
+    "registerSuccess": "Compte cree avec succes.",
+    "logoutSuccess": "Deconnexion reussie."
+  },
+  "forgotPassword": {
+    "title": "Mot de passe oublie",
+    "description": "Entrez votre email pour recevoir un lien de reinitialisation.",
+    "submit": "Envoyer le lien",
+    "success": "Si un compte existe avec cet email, un lien de reinitialisation a ete envoye.",
+    "backToLogin": "Retour a la connexion"
+  },
+  "resetPassword": {
+    "title": "Reinitialiser le mot de passe",
+    "newPassword": "Nouveau mot de passe",
+    "confirmPassword": "Confirmer le mot de passe",
+    "submit": "Reinitialiser",
+    "success": "Mot de passe reinitialise avec succes.",
+    "tokenInvalid": "Le lien de reinitialisation est invalide ou a expire."
+  },
+  "profile": {
+    "title": "Mon profil",
+    "personalInfo": "Informations personnelles",
+    "changePassword": "Changer le mot de passe",
+    "currentPassword": "Mot de passe actuel",
+    "newPassword": "Nouveau mot de passe",
+    "updateSuccess": "Profil mis a jour.",
+    "passwordSuccess": "Mot de passe modifie avec succes."
+  },
+  "dashboard": {
+    "title": "Tableau de bord",
+    "welcome": "Bienvenue, {{name}} !"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "empty": "Aucune notification",
+    "markAllRead": "Tout marquer comme lu",
+    "markRead": "Marquer comme lu",
+    "unread": "{{count}} non lue(s)",
+    "viewAll": "Voir toutes les notifications",
+    "types": {
+      "info": "Information",
+      "success": "Succes",
+      "warning": "Attention",
+      "error": "Erreur"
+    }
+  },
+  "admin": {
+    "dashboard": {
+      "title": "Dashboard",
+      "totalUsers": "Utilisateurs",
+      "verifiedEmails": "Emails verifies",
+      "verificationRate": "Taux de verification",
+      "admins": "Admins",
+      "registrationsByMonth": "Inscriptions par mois",
+      "roleDistribution": "Repartition des roles",
+      "recentUsers": "Derniers inscrits",
+      "viewAll": "Voir tout"
+    },
+    "users": {
+      "title": "Utilisateurs",
+      "email": "Email",
+      "name": "Nom",
+      "roles": "Roles",
+      "verified": "Verifie",
+      "createdAt": "Inscription",
+      "lastLogin": "Derniere connexion",
+      "actions": "Actions",
+      "deleteConfirm": "Confirmer la suppression de cet utilisateur ?",
+      "editTitle": "Modifier l'utilisateur",
+      "detailTitle": "Detail utilisateur"
+    },
+    "auditLog": {
+      "title": "Journal d'audit",
+      "action": "Action",
+      "entity": "Entite",
+      "performedBy": "Par",
+      "ip": "IP",
+      "date": "Date",
+      "details": "Details"
+    },
+    "nav": {
+      "dashboard": "Dashboard",
+      "users": "Utilisateurs",
+      "auditLog": "Journal d'audit",
+      "notifications": "Notifications"
+    }
+  },
+  "errors": {
+    "notFound": "Page introuvable",
+    "notFoundDescription": "La page que vous cherchez n'existe pas.",
+    "backHome": "Retour a l'accueil",
+    "serverError": "Erreur serveur",
+    "networkError": "Erreur reseau. Verifiez votre connexion.",
+    "unauthorized": "Authentification requise.",
+    "forbidden": "Acces interdit."
+  },
+  "footer": {
+    "madeWith": "Construit avec Symfony, React et TypeScript"
+  }
+}

@@ -35,7 +35,7 @@ final class HealthcheckController extends AbstractController
             'status' => $allOk ? 'ok' : 'degraded',
             'checks' => $checks,
             'timestamp' => (new \DateTimeImmutable())->format(\DateTimeInterface::ATOM),
-            'version' => '0.4.0',
+            'version' => '0.5.0',
         ], $statusCode);
     }
 
