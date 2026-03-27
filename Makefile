@@ -204,3 +204,24 @@ prod-logs: ## Logs de production
 .PHONY: front-build
 front-build: ## Build le frontend pour la production
 	$(NODE_EXEC) npm run build
+
+# ------------------------------------------------------------------
+# Securite
+# ------------------------------------------------------------------
+
+.PHONY: audit
+audit: ## Audit des dependances (Composer + npm)
+	$(COMPOSER) audit
+	$(NODE_EXEC) npm audit --audit-level=high
+
+.PHONY: smoke-test
+smoke-test: ## Smoke tests post-deploiement
+	bash tests/smoke/smoke-test.sh http://localhost:$(NGINX_PORT:-8080)
+
+# ------------------------------------------------------------------
+# Nettoyage
+# ------------------------------------------------------------------
+
+.PHONY: clean-refresh-tokens
+clean-refresh-tokens: ## Nettoyer les refresh tokens expires
+	$(CONSOLE) app:clean-expired-tokens

@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        php-version: ['8.3']
+        php-version: ['8.3', '8.4']
 
     services:
       postgres:
@@ -40,7 +40,10 @@ jobs:
       APP_DEBUG: 0
       DATABASE_URL: 'postgresql://kickstarter:kickstarter@localhost:5432/kickstarter_test?serverVersion=16&charset=utf8'
       REDIS_URL: 'redis://localhost:6379'
+      REDIS_HOST: 'localhost'
+      REDIS_PORT: '6379'
       JWT_PASSPHRASE: kickstarter
+      JWT_COOKIE_ENABLED: 'false'
       MESSENGER_TRANSPORT_DSN: 'doctrine://default?auto_setup=0'
       MAILER_DSN: 'null://null'
 
@@ -53,7 +56,7 @@ jobs:
         with:
           php-version: ${{ matrix.php-version }}
           extensions: pdo_pgsql, intl, zip, redis
-          coverage: none
+          coverage: xdebug
 
       - name: Cache des dependances Composer
         uses: actions/cache@v4
@@ -65,6 +68,9 @@ jobs:
 
       - name: Installation des dependances Composer
         run: composer install --no-interaction --no-progress --prefer-dist
+
+      - name: Audit des dependances Composer
+        run: composer audit --no-interaction
 
       - name: Generation des cles JWT pour les tests
         run: |
@@ -84,12 +90,24 @@ jobs:
       - name: Verification du style PHP CS Fixer
         run: php vendor/bin/php-cs-fixer fix --dry-run --diff
 
-      - name: Tests PHPUnit
-        run: php vendor/bin/phpunit
+      - name: Tests PHPUnit avec couverture
+        run: php vendor/bin/phpunit --coverage-clover coverage.xml --coverage-text | tee coverage-output.txt
+
+      - name: Verification du seuil de couverture backend (70%)
+        run: |
+          COVERAGE=$(grep -oP 'Lines:\s+\K[\d.]+' coverage-output.txt | head -1)
+          echo "Couverture backend : ${COVERAGE}%"
+          if [ "$(echo "$COVERAGE < 70" | bc -l)" -eq 1 ]; then
+            echo "ERREUR : Couverture insuffisante (${COVERAGE}% < 70%)"
+            exit 1
+          fi
 
   frontend-tests:
-    name: Frontend Tests
+    name: Frontend Tests (Node ${{ matrix.node-version }})
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: ['20', '22']
 
     defaults:
       run:
@@ -99,15 +117,18 @@ jobs:
       - name: Checkout du code source
         uses: actions/checkout@v4
 
-      - name: Installation de Node.js
+      - name: Installation de Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: ${{ matrix.node-version }}
           cache: 'npm'
           cache-dependency-path: front/package-lock.json
 
       - name: Installation des dependances npm
         run: npm ci
+
+      - name: Audit des dependances npm
+        run: npm audit --audit-level=high || true
 
       - name: Verification ESLint
         run: npm run lint
@@ -118,8 +139,11 @@ jobs:
       - name: Verification TypeScript
         run: npx tsc --noEmit
 
-      - name: Tests Vitest
-        run: npm test
+      - name: Tests Vitest avec couverture
+        run: npm run test:coverage
+
+      - name: Verification accessibilite (axe-core)
+        run: npm run test:a11y || true
 
   frontend-build:
     name: Frontend Build
@@ -146,3 +170,28 @@ jobs:
 
       - name: Build de production
         run: npm run build
+
+  security-scan:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout du code source
+        uses: actions/checkout@v4
+
+      - name: Installation de PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: pdo_pgsql, intl, zip, redis
+
+      - name: Installation des dependances Composer
+        run: cd api && composer install --no-interaction --no-progress --prefer-dist
+
+      - name: Audit Composer (bloquant)
+        run: cd api && composer audit --no-interaction
+
+      - name: Installation des dependances npm
+        run: cd front && npm ci
+
+      - name: Audit npm (bloquant sur high/critical)
+        run: cd front && npm audit --audit-level=high

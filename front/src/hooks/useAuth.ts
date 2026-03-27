@@ -1,7 +1,7 @@
 import { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
 import { createElement } from 'react';
 import type { User, LoginCredentials, RegisterData, AuthResponse } from '@/types';
-import { get, post, setToken, removeToken } from '@/services/api';
+import { get, post, setToken, removeToken, setRefreshToken, getRefreshToken } from '@/services/api';
 
 // Interface du contexte d'authentification
 interface AuthContextType {
@@ -11,7 +11,8 @@ interface AuthContextType {
   isLoading: boolean;
   login: (credentials: LoginCredentials) => Promise<void>;
   register: (data: RegisterData) => Promise<void>;
-  logout: () => void;
+  logout: () => Promise<void>;
+  refreshUser: () => Promise<void>;
 }
 
 // Contexte d'authentification
@@ -26,7 +27,8 @@ interface AuthProviderProps {
 }
 
 /**
- * Provider d'authentification qui encapsule l'application
+ * Provider d'authentification qui encapsule l'application.
+ * Gere le cycle de vie des tokens JWT et refresh tokens.
  */
 export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<User | null>(null);
@@ -48,6 +50,13 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
   }, []);
 
+  // Rafraichit les donnees utilisateur
+  const refreshUser = useCallback(async () => {
+    if (token) {
+      await loadUser();
+    }
+  }, [token, loadUser]);
+
   // Verification du token au montage du composant
   useEffect(() => {
     if (token) {
@@ -62,6 +71,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
     const response = await post<AuthResponse>('/login', credentials);
     setToken(response.token);
     setTokenState(response.token);
+
+    // Stockage du refresh token
+    if (response.refresh_token) {
+      setRefreshToken(response.refresh_token);
+    }
 
     const userData = await get<User>('/me');
     setUser(userData);
@@ -79,15 +93,28 @@ export function AuthProvider({ children }: AuthProviderProps) {
     setToken(response.token);
     setTokenState(response.token);
 
+    if (response.refresh_token) {
+      setRefreshToken(response.refresh_token);
+    }
+
     const userData = await get<User>('/me');
     setUser(userData);
   }, []);
 
-  // Deconnexion
-  const logout = useCallback(() => {
-    setUser(null);
-    setTokenState(null);
-    removeToken();
+  // Deconnexion avec revocation des tokens
+  const logout = useCallback(async () => {
+    try {
+      const refreshTokenValue = getRefreshToken();
+      await post('/logout', {
+        refresh_token: refreshTokenValue,
+      });
+    } catch {
+      // Meme en cas d'erreur, on deconnecte localement
+    } finally {
+      setUser(null);
+      setTokenState(null);
+      removeToken();
+    }
   }, []);
 
   const value: AuthContextType = {
@@ -98,6 +125,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     login,
     register,
     logout,
+    refreshUser,
   };
 
   return createElement(AuthContext.Provider, { value }, children);

@@ -4,6 +4,67 @@ Toutes les modifications notables de ce projet sont documentees dans ce fichier.
 
 Le format est base sur [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/).
 
+## [0.9.0] - 2026-03-27
+
+### Ajoute
+
+#### Backend - Authentification
+- Refresh token JWT avec rotation (entite RefreshToken, endpoint POST /api/token/refresh)
+- Stockage refresh token en base (duree 30 jours, max 5 sessions actives par utilisateur)
+- Revocation des refresh tokens a la deconnexion (POST /api/logout)
+- Blacklist des access tokens revoques via Redis (TokenBlacklistService, TTL automatique)
+- Option stockage JWT en cookie httpOnly (variable JWT_COOKIE_ENABLED)
+
+#### Backend - Securite
+- Headers de securite avances (SecurityHeaderSubscriber : CSP, Permissions-Policy, Referrer-Policy, COOP, CORP)
+- Protection SSRF sur les uploads (SafeUploadValidator : verification MIME reelle via finfo)
+- Configuration Dependabot (Composer, npm, GitHub Actions - PR automatiques hebdomadaires)
+- Scan vulnerabilites composer audit et npm audit en CI (bloquant)
+- Expiration automatique des sessions inactives (revocation refresh tokens)
+
+#### Backend - API
+- Matrice de tests CI elargie (PHP 8.3/8.4, Node 20/22)
+- Pipeline CI avec seuils de couverture (back 70%, front 60%)
+- Job security-scan dedie (audits Composer + npm bloquants)
+
+#### Tests et qualite
+- Tests TokenControllerTest (6 tests : refresh, rotation, revocation, logout)
+- Tests SecurityHeadersTest (2 tests : headers, CSP)
+- Script de test de charge k6 (scenarios realistes, seuils p95 < 500ms)
+- Script smoke tests post-deploiement (verification endpoints critiques)
+- Commande app:clean-expired-tokens etendue aux refresh tokens
+
+#### Frontend - Gestion d'etat et cache
+- TanStack Query (React Query v5) : provider, cache, retry automatique avec backoff exponentiel
+- Zustand (store global) : preferences UI, sidebar, detection offline, file d'attente actions
+- Retry automatique sur erreurs reseau dans api.ts (backoff exponentiel, max 3 tentatives)
+- Rafraichissement JWT automatique sur 401 (transparent, verrou anti-concurrence)
+
+#### Frontend - Robustesse
+- Lazy loading de toutes les routes (React.lazy + Suspense, chunks separes)
+- Composant LoadingSpinner (indicateur pour le lazy loading)
+- Detection offline (hook useOnlineStatus, banniere OfflineBanner)
+- File d'attente des actions offline (replay automatique au retour connexion)
+- Deconnexion avec revocation server-side des tokens
+
+#### DevOps
+- Templates GitHub Issues (bug report, feature request)
+- Template GitHub Pull Request
+- Commandes Makefile : audit, smoke-test, clean-refresh-tokens
+
+### Modifie
+
+- api.ts : retry automatique, refresh token transparent, backoff exponentiel
+- useAuth : support refresh token, logout avec revocation, refreshUser
+- App.tsx : QueryProvider, lazy loading, OfflineBanner
+- security.yaml : route publique /api/token/refresh
+- services.yaml : service Redis, TokenBlacklistService, parametre JWT_COOKIE_ENABLED
+- .env : variables REDIS_HOST, REDIS_PORT, JWT_COOKIE_ENABLED
+- CI : matrice PHP 8.3/8.4, Node 20/22, audits securite, coverage
+- CleanExpiredTokensCommand : nettoyage refresh tokens expires/revoques
+- Makefile : commandes audit, smoke-test, clean-refresh-tokens
+- package.json : ajout @tanstack/react-query, zustand
+
 ## [0.8.0] - 2026-03-27
 
 ### Ajoute
