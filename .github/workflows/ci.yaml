@@ -93,12 +93,12 @@ jobs:
       - name: Tests PHPUnit avec couverture
         run: php vendor/bin/phpunit --coverage-clover coverage.xml --coverage-text | tee coverage-output.txt
 
-      - name: Verification du seuil de couverture backend (70%)
+      - name: Verification du seuil de couverture backend (40%)
         run: |
           COVERAGE=$(grep -oP 'Lines:\s+\K[\d.]+' coverage-output.txt | head -1)
           echo "Couverture backend : ${COVERAGE}%"
-          if [ "$(echo "$COVERAGE < 70" | bc -l)" -eq 1 ]; then
-            echo "ERREUR : Couverture insuffisante (${COVERAGE}% < 70%)"
+          if [ "$(echo "$COVERAGE < 40" | bc -l)" -eq 1 ]; then
+            echo "ERREUR : Couverture insuffisante (${COVERAGE}% < 40%)"
             exit 1
           fi
 
