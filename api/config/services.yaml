@@ -8,6 +8,8 @@ parameters:
   app.github_client_secret: '%env(GITHUB_CLIENT_SECRET)%'
   app.meilisearch_url: '%env(MEILISEARCH_URL)%'
   app.meilisearch_api_key: '%env(MEILISEARCH_API_KEY)%'
+  app.jwt_cookie_enabled: '%env(bool:default:app.jwt_cookie_default:JWT_COOKIE_ENABLED)%'
+  app.jwt_cookie_default: 'false'
 
 services:
   _defaults:
@@ -39,3 +41,14 @@ services:
     arguments:
       $meilisearchUrl: '%app.meilisearch_url%'
       $meilisearchApiKey: '%app.meilisearch_api_key%'
+
+  # Client Redis pour la blacklist de tokens
+  Redis:
+    class: \Redis
+    calls:
+      - connect: ['%env(REDIS_HOST)%', '%env(int:REDIS_PORT)%']
+
+  # Service de blacklist des access tokens
+  App\Service\TokenBlacklistService:
+    arguments:
+      $redis: '@Redis'

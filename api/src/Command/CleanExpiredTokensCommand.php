@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Command;
 
 use App\Entity\EmailVerificationToken;
+use App\Entity\RefreshToken;
 use App\Entity\ResetPasswordToken;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
@@ -21,7 +22,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
  */
 #[AsCommand(
     name: 'app:clean-expired-tokens',
-    description: 'Supprime les tokens expires (reset password + verification email)',
+    description: 'Supprime les tokens expires (reset password, verification email, refresh tokens)',
 )]
 class CleanExpiredTokensCommand extends Command
 {
@@ -61,21 +62,26 @@ class CleanExpiredTokensCommand extends Command
             $dryRun,
         );
 
-        $total = $resetCount + $verifyCount;
+        // Nettoyage des refresh tokens expires ou revoques
+        $refreshCount = $this->cleanRefreshTokens($now, $dryRun);
+
+        $total = $resetCount + $verifyCount + $refreshCount;
 
         if ($dryRun) {
             $io->note(\sprintf(
-                '[DRY-RUN] %d token(s) a supprimer (%d reset password, %d verification email)',
+                '[DRY-RUN] %d token(s) a supprimer (%d reset password, %d verification email, %d refresh)',
                 $total,
                 $resetCount,
                 $verifyCount,
+                $refreshCount,
             ));
         } else {
             $io->success(\sprintf(
-                '%d token(s) expire(s) supprime(s) (%d reset password, %d verification email)',
+                '%d token(s) expire(s) supprime(s) (%d reset password, %d verification email, %d refresh)',
                 $total,
                 $resetCount,
                 $verifyCount,
+                $refreshCount,
             ));
         }
 
@@ -109,6 +115,35 @@ class CleanExpiredTokensCommand extends Command
         return (int) $qb
             ->delete($entityClass, 't')
             ->where('t.expiresAt < :now')
+            ->setParameter('now', $now)
+            ->getQuery()
+            ->execute();
+    }
+
+    /**
+     * Supprime les refresh tokens expires ou revoques.
+     */
+    private function cleanRefreshTokens(DateTimeImmutable $now, bool $dryRun): int
+    {
+        $qb = $this->entityManager->createQueryBuilder();
+
+        if ($dryRun) {
+            $count = (int) $qb
+                ->select('COUNT(t)')
+                ->from(RefreshToken::class, 't')
+                ->where('t.expiresAt < :now')
+                ->orWhere('t.isRevoked = true')
+                ->setParameter('now', $now)
+                ->getQuery()
+                ->getSingleScalarResult();
+
+            return $count;
+        }
+
+        return (int) $qb
+            ->delete(RefreshToken::class, 't')
+            ->where('t.expiresAt < :now')
+            ->orWhere('t.isRevoked = true')
             ->setParameter('now', $now)
             ->getQuery()
             ->execute();

@@ -45,6 +45,7 @@ security:
     - { path: ^/api/forgot-password, roles: PUBLIC_ACCESS, methods: [POST] }
     - { path: ^/api/reset-password, roles: PUBLIC_ACCESS, methods: [POST] }
     - { path: ^/api/verify-email, roles: PUBLIC_ACCESS, methods: [GET] }
+    - { path: ^/api/token/refresh, roles: PUBLIC_ACCESS, methods: [POST] }
     - { path: ^/api/oauth, roles: PUBLIC_ACCESS }
     - { path: ^/api/feature-flags, roles: PUBLIC_ACCESS, methods: [GET] }
     - { path: ^/uploads, roles: PUBLIC_ACCESS, methods: [GET] }
