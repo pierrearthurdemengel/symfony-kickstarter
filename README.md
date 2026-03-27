@@ -15,6 +15,8 @@
 | CSS | Tailwind CSS | 3.x |
 | BDD | PostgreSQL | 16 |
 | Cache | Redis | 7 |
+| Temps reel | Mercure (SSE) | latest |
+| Recherche | Meilisearch | 1.6 |
 | Container | Docker Compose | - |
 | Reverse proxy | Nginx | 1.25 |
 | Mail dev | Mailpit | latest |
@@ -63,9 +65,11 @@ make jwt-generate
 | Frontend (via Nginx) | [http://localhost:8080](http://localhost:8080) |
 | Frontend (Vite direct) | [http://localhost:3010](http://localhost:3010) |
 | API (docs Swagger) | [http://localhost:8080/api](http://localhost:8080/api) |
+| Mercure Hub | [http://localhost:3001/.well-known/mercure](http://localhost:3001/.well-known/mercure) |
+| Meilisearch | [http://localhost:7700](http://localhost:7700) |
 | Mailpit | [http://localhost:8026](http://localhost:8026) |
 
-> Les ports sont configurables via des variables d'environnement dans un fichier `.env` a la racine ou en ligne de commande (ex: `NGINX_PORT=80 docker compose up -d`). Ports par defaut : Nginx 8080, Node 3010, PostgreSQL 5433, Redis 6380, Mailpit 8026/1026.
+> Les ports sont configurables via des variables d'environnement dans un fichier `.env` a la racine ou en ligne de commande (ex: `NGINX_PORT=80 docker compose up -d`). Ports par defaut : Nginx 8080, Node 3010, Mercure 3001, Meilisearch 7700, PostgreSQL 5433, Redis 6380, Mailpit 8026/1026.
 
 ## Comptes de test
 
@@ -128,6 +132,12 @@ make jwt-generate
 | `make shell-node` | Ouvrir un shell dans le container Node |
 | `make jwt-generate` | Generer les cles JWT |
 | `make help` | Afficher l'aide (liste des commandes) |
+| `make clean-tokens` | Supprimer les tokens expires |
+| `make clean-tokens-dry` | Afficher les tokens expires (sans supprimer) |
+| `make messenger-consume` | Lancer le worker Messenger |
+| `make messenger-failed` | Consulter les messages echoues |
+| `make messenger-retry` | Relancer les messages echoues |
+| `make test-coverage` | Lancer les tests avec couverture de code |
 
 ### Production
 
@@ -171,12 +181,18 @@ symfony-kickstarter/
 │   ├── migrations/               # Migrations Doctrine
 │   ├── public/                   # Point d'entree web
 │   ├── src/
-│   │   ├── Controller/           # Controllers (Healthcheck, Registration)
-│   │   ├── DataFixtures/         # Fixtures (users de test)
-│   │   ├── Entity/               # Entites Doctrine (User)
+│   │   ├── Command/              # Commandes Symfony (nettoyage tokens)
+│   │   ├── Controller/           # Controllers (Admin, Auth, OAuth, 2FA, GDPR, Search, etc.)
+│   │   ├── DataFixtures/         # Fixtures (50+ users, permissions par defaut)
+│   │   ├── Entity/               # Entites Doctrine (User, Permission, PermissionGroup, etc.)
+│   │   ├── EventSubscriber/      # Subscribers (activite, rate limiter, cache headers)
+│   │   ├── Message/              # Messages Messenger (async)
+│   │   ├── MessageHandler/       # Handlers Messenger
 │   │   ├── Repository/           # Repositories Doctrine
-│   │   ├── Security/Voter/       # Voters (UserVoter)
+│   │   ├── Security/Voter/       # Voters (UserVoter, PermissionVoter)
+│   │   ├── Service/              # Services (AuditLogger, Mercure, Search, FeatureFlag, Webhook)
 │   │   └── State/                # State processors API Platform
+│   ├── translations/             # Fichiers de traduction (fr, en)
 │   └── tests/
 │       ├── Functional/           # Tests fonctionnels
 │       └── Unit/                 # Tests unitaires
@@ -186,11 +202,13 @@ symfony-kickstarter/
 │   │   └── support/
 │   ├── src/
 │   │   ├── components/
-│   │   │   ├── Auth/             # LoginForm, RegisterForm, ProtectedRoute
-│   │   │   ├── Layout/           # Header, Footer, Layout
-│   │   │   └── Ui/              # Button, Input, Alert
-│   │   ├── hooks/                # useAuth, useApi
-│   │   ├── pages/                # Home, Login, Register, Dashboard, NotFound
+│   │   │   ├── Auth/             # LoginForm, RegisterForm, OAuthButtons, PermissionGate, etc.
+│   │   │   ├── Layout/           # Header, Footer, Layout, AdminLayout, ImpersonationBanner
+│   │   │   └── Ui/              # Button, Input, Alert, Modal, DataTable, Badge, etc.
+│   │   ├── hooks/                # useAuth, usePermissions, useMercure, useSearch, useFeatureFlags, etc.
+│   │   ├── i18n/                 # Configuration i18next + traductions (fr, en)
+│   │   ├── pages/                # Pages publiques + admin
+│   │   │   └── admin/            # Dashboard, Users, Permissions, FeatureFlags, Queue, AuditLog
 │   │   ├── services/             # Client API
 │   │   ├── tests/                # Tests unitaires (Vitest)
 │   │   └── types/                # Types TypeScript
@@ -225,35 +243,85 @@ symfony-kickstarter/
 
 ### Backend
 
-- Entite User complete (email, password, firstName, lastName, roles)
+- Entite User complete (email, password, firstName, lastName, roles, avatar, 2FA, permissions)
 - Authentification JWT (login `POST /api/login`, register `POST /api/register`)
+- OAuth social login (Google, GitHub) avec creation automatique de compte
+- Authentification 2FA TOTP (activation, verification, codes de secours)
+- Systeme RBAC granulaire (Permission, PermissionGroup, PermissionVoter)
 - API Platform CRUD avec documentation Swagger auto-generee
-- Security : firewall stateless, voters (UserVoter), controle d'acces
-- DataFixtures avec comptes admin et user de test
-- Migrations Doctrine
-- Endpoint healthcheck (`GET /api/healthcheck`)
-- Messenger async-ready (transport Doctrine par defaut, switchable vers Redis/AMQP)
-- Mailer configure (Mailpit en dev)
+- Security : firewall stateless, voters (UserVoter, PermissionVoter), controle d'acces
+- Impersonation admin (JWT custom claims, audit log)
+- Mot de passe oublie (forgot-password + reset-password avec token securise)
+- Verification email a l'inscription (token 24h, endpoints verify-email et resend-verification)
+- Upload de fichiers (entite MediaObject, endpoint multipart, champ avatar)
+- Rate limiting (login 5/min, register 3/h, forgot-password 3/h, API 100/min)
+- Journal d'audit (entite AuditLog, service AuditLogger)
+- Notifications in-app avec temps reel Mercure (entite Notification, endpoints CRUD, SSE)
+- Export CSV des utilisateurs (endpoint streame)
+- Endpoints admin (statistiques, export, audit logs, permissions, files d'attente) proteges ROLE_ADMIN
+- Recherche full-text via Meilisearch (SearchService, endpoint /api/search/{index})
+- Feature flags (FeatureFlagService, stockage Redis, endpoint admin)
+- Webhooks (WebhookService, signature HMAC-SHA256)
+- Conformite RGPD (export donnees personnelles, suppression de compte)
+- Cache HTTP (CacheHeaderSubscriber, pools Redis api/search)
+- Dashboard files d'attente Messenger (stats, messages en echec, retry)
+- Commande de nettoyage des tokens expires (`app:clean-expired-tokens --dry-run`)
+- Messenger async (transport Doctrine, config Supervisor pour la production)
+- Traductions i18n (francais/anglais) avec Symfony Translation
+- Logging structure (Monolog channels audit/security, formatage JSON)
+- Healthcheck avance (BDD + Redis, version, statut)
+- DataFixtures avec comptes admin, 50+ users et permissions par defaut
+- Mailer configure (templates Twig, Mailpit en dev)
 - State processor pour le hachage des mots de passe
+- Filtres API Platform (recherche, tri, date)
 
 ### Frontend
 
-- React Router v6 avec routes protegees (ProtectedRoute)
+- React Router v6 avec routes protegees (ProtectedRoute, AdminRoute)
 - Authentification JWT complete (hook `useAuth`)
-- Pages : Home, Login, Register, Dashboard, 404
+- OAuth social login (boutons Google/GitHub sur le formulaire de connexion)
+- Authentification 2FA (page setup avec QR code, page verification)
+- Permissions RBAC (hook `usePermissions`, composant `PermissionGate`)
+- Impersonation admin (banniere avec retour au compte admin)
+- Notifications temps reel via Mercure SSE (hook `useMercure`)
+- Feature flags (hook `useFeatureFlags`, provider context)
+- Internationalisation i18n (francais/anglais) avec react-i18next
+- Selecteur de langue dans le header
+- Systeme de notifications in-app (cloche avec badge, page dediee)
+- Interface admin complete avec sidebar responsive
+- Dashboard admin avec graphiques Recharts (inscriptions/mois, roles)
+- Gestion utilisateurs admin (liste, detail, edition, suppression)
+- Administration permissions RBAC (groupes, selection par categorie)
+- Administration feature flags (toggles temps reel)
+- Dashboard files d'attente Messenger (stats, echecs, retry)
+- Journal d'audit admin (tableau pagine, details JSON)
+- Export CSV (dashboard et liste utilisateurs)
+- Page RGPD (export donnees, suppression compte)
+- Recherche full-text via Meilisearch (hook `useSearch`)
+- Dark mode (light/dark/system)
+- Systeme de toast/notifications
+- Validation formulaires avec react-hook-form + zod
+- PWA (manifest, service worker, support hors-ligne)
+- Pages : Home, Login, Register, Dashboard, Profil, 2FA, OAuth, RGPD, Notifications, 404
 - Client API (`services/api.ts`) avec injection automatique du token JWT
-- Hook `useApi` pour les appels API
-- Composants UI reutilisables : Button, Input, Alert
+- Composants UI : Button, Input, Alert, Modal, DataTable, Pagination, Dropdown, Skeleton, Badge, FileUpload, SearchInput, NotificationBell, LanguageSwitcher, OAuthButtons, PermissionGate, ImpersonationBanner
 - Layout responsive : Header avec navigation, Footer
+- Error Boundary React
 - Tailwind CSS avec configuration personnalisee
 
 ### DevOps
 
-- Docker multi-services : PHP 8.3 FPM, Nginx 1.25, Node, PostgreSQL 16, Redis 7, Mailpit
+- Docker multi-services : PHP 8.3 FPM, Nginx 1.25, Node, PostgreSQL 16, Redis 7, Mercure, Meilisearch, Mailpit
+- Docker production multi-stage (PHP + React buildes)
+- Config Nginx production (gzip, cache, HSTS, CSP)
+- Config PHP production (opcache JIT, validate_timestamps off)
+- Supervisor Messenger worker (config prete pour la production)
 - Docker Compose override pour le dev (Xdebug active)
-- Makefile avec 20+ commandes organisees par categorie
-- CI GitHub Actions
-- Qualite code : PHPStan level 8, PHP CS Fixer (PSR-12), ESLint, Prettier
+- Makefile avec 30+ commandes organisees par categorie
+- CI/CD GitHub Actions (tests, deploy)
+- Husky + lint-staged + commitlint (Conventional Commits)
+- Qualite code : PHPStan level 6, PHP CS Fixer (PSR-12), ESLint, Prettier
+- Configuration Sentry prete a activer
 
 ## Deploiement en production
 

@@ -4,6 +4,109 @@ Toutes les modifications notables de ce projet sont documentees dans ce fichier.
 
 Le format est base sur [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/).
 
+## [0.8.0] - 2026-03-27
+
+### Ajoute
+
+- Endpoints RGPD (GET /api/me/export, POST /api/me/delete) avec export JSON et suppression de compte
+- Service FeatureFlagService (stockage Redis, flags par defaut configurables)
+- Endpoints feature flags (GET /api/feature-flags public, PUT /api/admin/feature-flags/{flag})
+- Service WebhookService (dispatch HTTP avec signature HMAC-SHA256, multi-endpoints)
+- PWA : manifest.json, service worker (cache network-first, support hors-ligne)
+- Page admin Feature Flags (toggles temps reel)
+- Page RGPD (export donnees, suppression compte avec confirmation)
+- Hook useFeatureFlags (provider + context)
+- Meta PWA dans index.html (theme-color, manifest, apple-touch-icon)
+
+## [0.7.0] - 2026-03-27
+
+### Ajoute
+
+- Service Meilisearch (Docker container, SearchService, endpoint GET /api/search/{index})
+- Event subscriber CacheHeaderSubscriber (headers HTTP cache public/prive)
+- Pools de cache Redis supplementaires (cache.api, cache.search)
+- Dashboard files d'attente admin (GET /api/admin/queue/stats, GET /api/admin/queue/failed, POST /api/admin/queue/retry/{id})
+- Monolog : channels audit et security avec formatage JSON structure
+- Page admin Files d'attente (stats, messages en echec, bouton retry)
+- Hook useSearch (recherche Meilisearch)
+- Navigation admin enrichie (Permissions, Feature Flags, Files d'attente)
+
+### Modifie
+
+- docker-compose.yaml : ajout service Meilisearch
+- cache.yaml : pools api et search
+- monolog.yaml : handlers audit et security
+
+## [0.6.0] - 2026-03-27
+
+### Ajoute
+
+- OAuth social login (Google, GitHub) avec OAuthController et entite UserOAuthProvider
+- Authentification 2FA TOTP sans bundle externe (TwoFactorController, generation QR code, codes de secours)
+- Impersonation admin (ImpersonationController, JWT custom claims, audit log)
+- Systeme RBAC granulaire (entites Permission, PermissionGroup, PermissionVoter)
+- Administration des permissions (PermissionController CRUD, DataFixtures par defaut)
+- Mercure SSE (Docker container, MercurePublisher, notifications temps reel)
+- ProfileController (GET/PATCH /api/me, POST /api/me/password)
+- Composant OAuthButtons (Google + GitHub avec icones SVG)
+- Page OAuthCallback (echange code autorisation contre JWT)
+- Pages TwoFactorSetup (QR code + verification) et TwoFactorVerify (saisie code)
+- Composant ImpersonationBanner (detection claim JWT, retour admin)
+- Composant PermissionGate (affichage conditionnel par permission)
+- Page admin PermissionGroups (CRUD modal avec selection par categorie)
+- Hook useMercure (SSE avec auto-reconnexion)
+- Hook usePermissions (verification RBAC cote client)
+- Migration V0.6 (tables permission, permission_group, user_oauth_provider, colonnes 2FA)
+- Boutons OAuth sur le formulaire de connexion
+- Section 2FA sur la page profil (activation/desactivation)
+
+### Modifie
+
+- docker-compose.yaml : ajout services Mercure et Meilisearch
+- security.yaml : routes publiques OAuth et feature-flags
+- services.yaml : parametres OAuth et Meilisearch
+- User entity : champs isTwoFactorEnabled, totpSecret, backupCodes, permissionGroups
+- NotificationService : publication Mercure temps reel
+- .env : variables Mercure, OAuth, Meilisearch
+
+### Corrige
+
+- Test JWT passphrase (phpunit.xml.dist nettoyage variables JWT)
+- Transport Messenger en test (sync:// au lieu de doctrine://)
+- Rate limiter persistant entre tests (limites tres hautes en when@test)
+- Isolation des tests (dama/doctrine-test-bundle)
+- Duplicate email AuthenticationTest
+- TO_CHAR DQL incompatible (passage en SQL natif)
+- Entite User detachee dans NotificationControllerTest
+- Faux JPEG non detecte comme image/jpeg (header binaire valide)
+- UniqueEntity violation sur PUT avec meme email (passage en PATCH)
+
+## [0.5.0] - 2026-03-26
+
+### Ajoute
+
+- Notifications in-app (entite Notification, NotificationRepository, NotificationController)
+- Endpoints notifications (GET /api/notifications, GET /api/notifications/unread-count, PATCH /api/notifications/{id}/read, POST /api/notifications/mark-all-read, DELETE /api/notifications/{id})
+- Service NotificationService pour la creation de notifications depuis le backend
+- Internationalisation backend : Symfony Translation (francais/anglais) avec fichiers YAML
+- Internationalisation frontend : react-i18next avec detection automatique de la langue du navigateur
+- Fichiers de traduction complets (fr.json + en.json) couvrant toute l'interface
+- Composant LanguageSwitcher (bascule FR/EN dans le header)
+- Composant NotificationBell (cloche avec badge compteur, dropdown des notifications recentes)
+- Page Notifications (liste paginee, marquer lu, supprimer)
+- Hook useNotifications (CRUD + polling automatique du compteur non lu)
+- Configuration Supervisor pour le worker Messenger en production
+- Commandes Makefile : messenger-consume, messenger-failed, messenger-retry
+- Tests NotificationControllerTest (7 tests : CRUD, unread count, isolation par utilisateur)
+- Migration notification table
+- Script init.sh ameliore (plus de fichiers, reinitialisation Git, nettoyage)
+
+### Modifie
+
+- Header : ajout de NotificationBell, LanguageSwitcher, traductions i18n
+- README : mise a jour complete des fonctionnalites (V0.3/V0.4/V0.5), architecture, commandes
+- Healthcheck version 0.5.0
+
 ## [0.4.0] - 2026-03-26
 
 ### Ajoute
