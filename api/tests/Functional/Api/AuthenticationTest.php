@@ -66,12 +66,12 @@ final class AuthenticationTest extends WebTestCase
 
     public function testLoginWithInvalidCredentials(): void
     {
-        $this->createTestUser();
+        $this->createTestUser('auth-bad@test.dev');
 
         $this->client->request('POST', '/api/login', [], [], [
             'CONTENT_TYPE' => 'application/json',
         ], (string) json_encode([
-            'email' => 'auth@test.dev',
+            'email' => 'auth-bad@test.dev',
             'password' => 'wrong_password',
         ]));
 

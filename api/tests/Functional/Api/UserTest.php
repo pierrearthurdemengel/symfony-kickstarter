@@ -115,17 +115,16 @@ final class UserTest extends WebTestCase
         self::assertResponseStatusCodeSame(Response::HTTP_CREATED);
     }
 
-    public function testPutUserAsOwner(): void
+    public function testPatchUserAsOwner(): void
     {
         $token = $this->createUserAndGetToken('owner@test.dev');
         $userId = $this->getUserIdByEmail('owner@test.dev');
 
-        $this->client->request('PUT', '/api/users/' . $userId, [], [], [
+        $this->client->request('PATCH', '/api/users/' . $userId, [], [], [
             'HTTP_AUTHORIZATION' => 'Bearer ' . $token,
-            'CONTENT_TYPE' => 'application/ld+json',
+            'CONTENT_TYPE' => 'application/merge-patch+json',
             'HTTP_ACCEPT' => 'application/ld+json',
         ], (string) json_encode([
-            'email' => 'owner@test.dev',
             'firstName' => 'Modifie',
             'lastName' => 'ParLui',
         ]));

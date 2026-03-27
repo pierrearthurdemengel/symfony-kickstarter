@@ -6,6 +6,7 @@ import { useToast } from '@/hooks/useToast';
 import { loginSchema, type LoginFormData } from '@/lib/validations';
 import Button from '@/components/Ui/Button';
 import Input from '@/components/Ui/Input';
+import OAuthButtons from '@/components/Auth/OAuthButtons';
 import type { ApiError } from '@/types';
 
 export default function LoginForm() {
@@ -69,7 +70,11 @@ export default function LoginForm() {
           </Link>
         </p>
 
-        <p className="mt-2 text-center text-sm text-secondary-600 dark:text-gray-400">
+        <div className="mt-6">
+          <OAuthButtons />
+        </div>
+
+        <p className="mt-4 text-center text-sm text-secondary-600 dark:text-gray-400">
           Pas encore de compte ?{' '}
           <Link
             to="/register"

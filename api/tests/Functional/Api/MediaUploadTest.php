@@ -59,6 +59,7 @@ final class MediaUploadTest extends WebTestCase
 
     /**
      * Creation d'un fichier image temporaire pour les tests.
+     * Genere un fichier JPEG minimal valide (sans GD) pour la detection MIME.
      */
     private function createTestImage(string $name = 'test.jpg', string $mimeType = 'image/jpeg', int $sizeKb = 10): UploadedFile
     {
@@ -67,8 +68,28 @@ final class MediaUploadTest extends WebTestCase
             throw new \RuntimeException('Impossible de creer un fichier temporaire.');
         }
 
-        // Remplissage avec des donnees aleatoires pour simuler la taille
-        file_put_contents($tempFile, str_repeat('x', $sizeKb * 1024));
+        if ($mimeType === 'image/jpeg') {
+            // JPEG minimal valide : SOI + APP0 (JFIF) + SOF0 + SOS + EOI
+            $jpeg = "\xFF\xD8\xFF\xE0" . pack('n', 16) . "JFIF\x00\x01\x01\x00\x00\x01\x00\x01\x00\x00";
+            $jpeg .= "\xFF\xC0" . pack('n', 11) . "\x08\x00\x01\x00\x01\x01\x01\x11\x00";
+            $jpeg .= "\xFF\xDA" . pack('n', 8) . "\x01\x01\x00\x00\x3F\x00\x7F\x50";
+            $jpeg .= "\xFF\xD9";
+            file_put_contents($tempFile, $jpeg);
+
+            // Padding si la taille demandee est superieure
+            $currentSize = (int) filesize($tempFile);
+            $targetSize = $sizeKb * 1024;
+            if ($targetSize > $currentSize) {
+                $handle = fopen($tempFile, 'a');
+                if ($handle !== false) {
+                    fwrite($handle, str_repeat("\0", $targetSize - $currentSize));
+                    fclose($handle);
+                }
+            }
+        } else {
+            // Pour les types non-image, remplissage simple
+            file_put_contents($tempFile, str_repeat('x', $sizeKb * 1024));
+        }
 
         return new UploadedFile($tempFile, $name, $mimeType, null, true);
     }

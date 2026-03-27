@@ -17,6 +17,8 @@ use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
 use App\Repository\UserRepository;
 use App\State\UserHashPasswordProcessor;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -124,6 +126,29 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'boolean', options: ['default' => false])]
     #[Groups(['user:read'])]
     private bool $isEmailVerified = false;
+
+    /** @var Collection<int, PermissionGroup> Groupes de permissions RBAC */
+    #[ORM\ManyToMany(targetEntity: PermissionGroup::class)]
+    #[ORM\JoinTable(name: 'user_permission_group')]
+    #[Groups(['user:read'])]
+    private Collection $permissionGroups;
+
+    /** Secret TOTP pour l'authentification a deux facteurs */
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private ?string $totpSecret = null;
+
+    #[ORM\Column(type: 'boolean', options: ['default' => false])]
+    #[Groups(['user:read'])]
+    private bool $isTwoFactorEnabled = false;
+
+    /** @var list<string>|null Codes de secours pour le 2FA */
+    #[ORM\Column(type: 'json', nullable: true)]
+    private ?array $backupCodes = null;
+
+    public function __construct()
+    {
+        $this->permissionGroups = new ArrayCollection();
+    }
 
     public function getId(): ?Uuid
     {
@@ -271,6 +296,118 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->isEmailVerified = $isEmailVerified;
 
         return $this;
+    }
+
+    /** @return Collection<int, PermissionGroup> */
+    public function getPermissionGroups(): Collection
+    {
+        return $this->permissionGroups;
+    }
+
+    public function addPermissionGroup(PermissionGroup $group): static
+    {
+        if (!$this->permissionGroups->contains($group)) {
+            $this->permissionGroups->add($group);
+        }
+
+        return $this;
+    }
+
+    public function removePermissionGroup(PermissionGroup $group): static
+    {
+        $this->permissionGroups->removeElement($group);
+
+        return $this;
+    }
+
+    /**
+     * Retourne toutes les permissions de l'utilisateur (roles + groupes).
+     *
+     * @return list<string>
+     */
+    public function getAllPermissions(): array
+    {
+        $permissions = [];
+
+        // Permissions implicites des roles
+        if (\in_array('ROLE_ADMIN', $this->getRoles(), true)) {
+            $permissions[] = 'admin.access';
+        }
+
+        // Permissions des groupes RBAC
+        foreach ($this->permissionGroups as $group) {
+            foreach ($group->getPermissions() as $permission) {
+                $permissions[] = $permission->getName();
+            }
+        }
+
+        return array_values(array_unique($permissions));
+    }
+
+    /**
+     * Verifie si l'utilisateur a une permission specifique.
+     */
+    public function hasPermission(string $permissionName): bool
+    {
+        return \in_array($permissionName, $this->getAllPermissions(), true);
+    }
+
+    public function getTotpSecret(): ?string
+    {
+        return $this->totpSecret;
+    }
+
+    public function setTotpSecret(?string $totpSecret): static
+    {
+        $this->totpSecret = $totpSecret;
+
+        return $this;
+    }
+
+    public function isTwoFactorEnabled(): bool
+    {
+        return $this->isTwoFactorEnabled;
+    }
+
+    public function setIsTwoFactorEnabled(bool $isTwoFactorEnabled): static
+    {
+        $this->isTwoFactorEnabled = $isTwoFactorEnabled;
+
+        return $this;
+    }
+
+    /** @return list<string>|null */
+    public function getBackupCodes(): ?array
+    {
+        return $this->backupCodes;
+    }
+
+    /** @param list<string>|null $backupCodes */
+    public function setBackupCodes(?array $backupCodes): static
+    {
+        $this->backupCodes = $backupCodes;
+
+        return $this;
+    }
+
+    /**
+     * Consomme un code de secours (le retire de la liste).
+     */
+    public function consumeBackupCode(string $code): bool
+    {
+        if (null === $this->backupCodes) {
+            return false;
+        }
+
+        $index = array_search($code, $this->backupCodes, true);
+        if ($index === false) {
+            return false;
+        }
+
+        unset($this->backupCodes[$index]);
+        $this->backupCodes = array_values($this->backupCodes);
+
+        return true;
     }
 
     public function eraseCredentials(): void

@@ -72,6 +72,36 @@ services:
     networks:
       - kickstarter
 
+  meilisearch:
+    image: getmeili/meilisearch:v1.6
+    container_name: kickstarter-meilisearch
+    restart: unless-stopped
+    environment:
+      MEILI_MASTER_KEY: '${MEILI_MASTER_KEY:-kickstarter_meili_key}'
+      MEILI_ENV: development
+    ports:
+      - "${MEILI_PORT:-7700}:7700"
+    volumes:
+      - meilisearch_data:/meili_data
+    networks:
+      - kickstarter
+
+  mercure:
+    image: dunglas/mercure
+    container_name: kickstarter-mercure
+    restart: unless-stopped
+    environment:
+      SERVER_NAME: ':80'
+      MERCURE_PUBLISHER_JWT_KEY: '${MERCURE_JWT_SECRET:-ChangeThisMercureHubJWTSecretKey}'
+      MERCURE_SUBSCRIBER_JWT_KEY: '${MERCURE_JWT_SECRET:-ChangeThisMercureHubJWTSecretKey}'
+      MERCURE_EXTRA_DIRECTIVES: |
+        cors_origins http://localhost:${NODE_PORT:-3010} http://localhost:${NGINX_PORT:-8080}
+        anonymous
+    ports:
+      - "${MERCURE_PORT:-3001}:80"
+    networks:
+      - kickstarter
+
   mailpit:
     image: axllent/mailpit
     container_name: kickstarter-mailpit
@@ -85,6 +115,7 @@ services:
 volumes:
   database_data:
   front_node_modules:
+  meilisearch_data:
 
 networks:
   kickstarter:

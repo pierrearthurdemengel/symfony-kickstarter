@@ -17,3 +17,9 @@ framework:
 
     routing:
       'App\Message\SendWelcomeEmailMessage': async
+
+when@test:
+  framework:
+    messenger:
+      transports:
+        async: 'sync://'

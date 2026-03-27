@@ -2,6 +2,12 @@
 parameters:
   app.frontend_url: '%env(default:app.default_frontend_url:FRONTEND_URL)%'
   app.default_frontend_url: 'http://localhost:8080'
+  app.google_client_id: '%env(GOOGLE_CLIENT_ID)%'
+  app.google_client_secret: '%env(GOOGLE_CLIENT_SECRET)%'
+  app.github_client_id: '%env(GITHUB_CLIENT_ID)%'
+  app.github_client_secret: '%env(GITHUB_CLIENT_SECRET)%'
+  app.meilisearch_url: '%env(MEILISEARCH_URL)%'
+  app.meilisearch_api_key: '%env(MEILISEARCH_API_KEY)%'
 
 services:
   _defaults:
@@ -27,3 +33,9 @@ services:
       $registerLimiter: '@limiter.register_limiter'
       $forgotPasswordLimiter: '@limiter.forgot_password_limiter'
       $apiLimiter: '@limiter.api_limiter'
+
+  # Service de recherche Meilisearch
+  App\Service\SearchService:
+    arguments:
+      $meilisearchUrl: '%app.meilisearch_url%'
+      $meilisearchApiKey: '%app.meilisearch_api_key%'

@@ -49,16 +49,18 @@ final class AdminController extends AbstractController
             ->getQuery()
             ->getSingleScalarResult();
 
-        // Inscriptions par mois (12 derniers mois)
+        // Inscriptions par mois (12 derniers mois) - requete native pour TO_CHAR PostgreSQL
+        $conn = $this->entityManager->getConnection();
+
         /** @var array<int, array{month: string, count: string}> $registrationsByMonth */
-        $registrationsByMonth = $userRepo->createQueryBuilder('u')
-            ->select("TO_CHAR(u.createdAt, 'YYYY-MM') as month, COUNT(u.id) as count")
-            ->where('u.createdAt >= :since')
-            ->setParameter('since', new \DateTimeImmutable('-12 months'))
-            ->groupBy('month')
-            ->orderBy('month', 'ASC')
-            ->getQuery()
-            ->getResult();
+        $registrationsByMonth = $conn->fetchAllAssociative(
+            "SELECT TO_CHAR(created_at, 'YYYY-MM') as month, COUNT(id) as count
+             FROM \"user\"
+             WHERE created_at >= :since
+             GROUP BY TO_CHAR(created_at, 'YYYY-MM')
+             ORDER BY month ASC",
+            ['since' => (new \DateTimeImmutable('-12 months'))->format('Y-m-d H:i:s')],
+        );
 
         // Repartition des roles
         /** @var array<int, array{roles: string}> $allRoles */

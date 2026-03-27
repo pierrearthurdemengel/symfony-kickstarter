@@ -1,6 +1,7 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/useToast';
 import {
@@ -17,6 +18,10 @@ import type { ApiError, User } from '@/types';
 export default function Profile() {
   const { user } = useAuth();
   const { addToast } = useToast();
+  const navigate = useNavigate();
+  const [disabling2fa, setDisabling2fa] = useState(false);
+  const [password2fa, setPassword2fa] = useState('');
+  const [show2faDisable, setShow2faDisable] = useState(false);
 
   // Formulaire du profil
   const {
@@ -126,7 +131,7 @@ export default function Profile() {
       </div>
 
       {/* Section changement de mot de passe */}
-      <div className="rounded-xl bg-white p-6 shadow-md dark:bg-gray-800 sm:p-8">
+      <div className="mb-8 rounded-xl bg-white p-6 shadow-md dark:bg-gray-800 sm:p-8">
         <h2 className="mb-6 text-xl font-semibold text-secondary-900 dark:text-white">
           Changer le mot de passe
         </h2>
@@ -159,6 +164,75 @@ export default function Profile() {
             Changer le mot de passe
           </Button>
         </form>
+      </div>
+
+      {/* Section 2FA */}
+      <div className="rounded-xl bg-white p-6 shadow-md dark:bg-gray-800 sm:p-8">
+        <h2 className="mb-4 text-xl font-semibold text-secondary-900 dark:text-white">
+          Authentification a deux facteurs
+        </h2>
+        {user.isTwoFactorEnabled ? (
+          <div>
+            <div className="mb-4 flex items-center gap-2 text-sm text-green-600 dark:text-green-400">
+              <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+              </svg>
+              <span>2FA active</span>
+            </div>
+            {!show2faDisable ? (
+              <Button variant="danger" size="sm" onClick={() => setShow2faDisable(true)}>
+                Desactiver le 2FA
+              </Button>
+            ) : (
+              <div className="space-y-3">
+                <Input
+                  label="Mot de passe pour confirmer"
+                  type="password"
+                  value={password2fa}
+                  onChange={(e) => setPassword2fa(e.target.value)}
+                  placeholder="Votre mot de passe actuel"
+                />
+                <div className="flex gap-2">
+                  <Button
+                    variant="danger"
+                    size="sm"
+                    isLoading={disabling2fa}
+                    onClick={async () => {
+                      setDisabling2fa(true);
+                      try {
+                        await post('/2fa/disable', { password: password2fa });
+                        addToast('success', '2FA desactive.');
+                        setShow2faDisable(false);
+                        setPassword2fa('');
+                        // Recharge le profil
+                        window.location.reload();
+                      } catch (err) {
+                        const apiError = err as ApiError;
+                        addToast('error', apiError.message || 'Erreur.');
+                      } finally {
+                        setDisabling2fa(false);
+                      }
+                    }}
+                  >
+                    Confirmer
+                  </Button>
+                  <Button variant="outline" size="sm" onClick={() => { setShow2faDisable(false); setPassword2fa(''); }}>
+                    Annuler
+                  </Button>
+                </div>
+              </div>
+            )}
+          </div>
+        ) : (
+          <div>
+            <p className="mb-4 text-sm text-secondary-600 dark:text-gray-400">
+              Ajoutez une couche de securite supplementaire a votre compte.
+            </p>
+            <Button size="sm" onClick={() => navigate('/2fa/setup')}>
+              Activer le 2FA
+            </Button>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -19,6 +19,8 @@ export interface User {
   roles: string[];
   avatar: MediaObject | null;
   isEmailVerified: boolean;
+  isTwoFactorEnabled: boolean;
+  permissions?: string[];
   createdAt: string;
   updatedAt: string;
   lastLoginAt: string | null;
@@ -82,6 +84,7 @@ export interface RegisterData {
 
 export interface AuthResponse {
   token: string;
+  requires2fa?: boolean;
 }
 
 // Types pour le reset de mot de passe
@@ -147,9 +150,83 @@ export interface Column<T> {
   render?: (item: T) => ReactNode;
 }
 
+// Types pour les notifications in-app
+export interface Notification {
+  id: string;
+  type: 'info' | 'success' | 'warning' | 'error';
+  title: string;
+  message: string | null;
+  link: string | null;
+  isRead: boolean;
+  createdAt: string;
+}
+
+// Reponse paginee des notifications
+export interface NotificationResponse {
+  items: Notification[];
+  total: number;
+  unread: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+}
+
 // Types pour les toasts
 export interface ToastMessage {
   id: string;
   type: 'success' | 'error' | 'warning' | 'info';
   message: string;
+}
+
+// Types pour les permissions RBAC
+export interface Permission {
+  id: string;
+  name: string;
+  description: string;
+  category: string;
+}
+
+export interface PermissionCategory {
+  category: string;
+  permissions: Permission[];
+}
+
+export interface PermissionGroup {
+  id: string;
+  name: string;
+  description: string;
+  permissions: Permission[];
+  createdAt: string;
+}
+
+// Types pour le 2FA
+export interface TwoFactorEnableResponse {
+  secret: string;
+  otpauthUri: string;
+}
+
+export interface TwoFactorConfirmResponse {
+  message: string;
+  backupCodes: string[];
+}
+
+export interface TwoFactorVerifyResponse {
+  token: string;
+  backupCodeUsed: boolean;
+}
+
+// Types pour OAuth
+export interface OAuthUrlResponse {
+  url: string;
+}
+
+// Types pour l'impersonation
+export interface ImpersonateResponse {
+  token: string;
+  impersonatedUser: {
+    id: string;
+    email: string;
+    firstName: string | null;
+    lastName: string | null;
+  };
 }

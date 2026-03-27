@@ -21,3 +21,24 @@ framework:
             policy: sliding_window
             limit: 100
             interval: '1 minute'
+
+# Limites tres elevees en test pour ne pas bloquer les tests fonctionnels
+when@test:
+    framework:
+        rate_limiter:
+            login_limiter:
+                policy: sliding_window
+                limit: 10000
+                interval: '1 minute'
+            register_limiter:
+                policy: sliding_window
+                limit: 10000
+                interval: '1 minute'
+            forgot_password_limiter:
+                policy: sliding_window
+                limit: 10000
+                interval: '1 minute'
+            api_limiter:
+                policy: sliding_window
+                limit: 100000
+                interval: '1 minute'
