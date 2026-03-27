@@ -19,6 +19,7 @@ front/node_modules/
 front/dist/
 front/.cache/
 front/.vite/
+front/coverage/
 
 ### IDE ###
 .idea/
