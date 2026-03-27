@@ -37,7 +37,7 @@ export default function GdprExport() {
       addToast('success', 'Export telecharge.');
     } catch (err) {
       const apiError = err as ApiError;
-      addToast('error', apiError.message || 'Erreur lors de l\'export.');
+      addToast('error', apiError.message || "Erreur lors de l'export.");
     } finally {
       setExporting(false);
     }
@@ -72,8 +72,8 @@ export default function GdprExport() {
           Exporter mes donnees
         </h2>
         <p className="mb-4 text-sm text-secondary-600 dark:text-gray-400">
-          Telechargez une copie de toutes vos donnees personnelles au format JSON
-          (droit d&apos;acces RGPD, Article 15).
+          Telechargez une copie de toutes vos donnees personnelles au format JSON (droit
+          d&apos;acces RGPD, Article 15).
         </p>
         <Button onClick={handleExport} isLoading={exporting}>
           Telecharger mes donnees
@@ -86,8 +86,8 @@ export default function GdprExport() {
           Supprimer mon compte
         </h2>
         <p className="mb-4 text-sm text-secondary-600 dark:text-gray-400">
-          Cette action est irreversible. Toutes vos donnees seront supprimees
-          (droit a l&apos;effacement RGPD, Article 17).
+          Cette action est irreversible. Toutes vos donnees seront supprimees (droit a
+          l&apos;effacement RGPD, Article 17).
         </p>
 
         {!showDelete ? (
@@ -107,10 +107,21 @@ export default function GdprExport() {
               placeholder="Votre mot de passe actuel"
             />
             <div className="flex gap-3">
-              <Button variant="danger" onClick={handleDelete} isLoading={deleting} disabled={!deletePassword}>
+              <Button
+                variant="danger"
+                onClick={handleDelete}
+                isLoading={deleting}
+                disabled={!deletePassword}
+              >
                 Confirmer la suppression
               </Button>
-              <Button variant="outline" onClick={() => { setShowDelete(false); setDeletePassword(''); }}>
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setShowDelete(false);
+                  setDeletePassword('');
+                }}
+              >
                 Annuler
               </Button>
             </div>

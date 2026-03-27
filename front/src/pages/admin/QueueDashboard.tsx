@@ -55,7 +55,7 @@ export default function QueueDashboard() {
     setRetrying(id);
     try {
       await post(`/admin/queue/retry/${id}`, {});
-      addToast('success', 'Message remis en file d\'attente.');
+      addToast('success', "Message remis en file d'attente.");
       loadData();
     } catch (err) {
       const apiError = err as ApiError;
@@ -70,8 +70,19 @@ export default function QueueDashboard() {
       <AdminLayout title="Files d'attente">
         <div className="flex items-center justify-center py-12">
           <svg className="h-8 w-8 animate-spin text-primary-600" fill="none" viewBox="0 0 24 24">
-            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+            <circle
+              className="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              strokeWidth="4"
+            />
+            <path
+              className="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+            />
           </svg>
         </div>
       </AdminLayout>
@@ -85,11 +96,15 @@ export default function QueueDashboard() {
         <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
           <div className="rounded-xl bg-white p-6 shadow-md dark:bg-gray-800">
             <p className="text-sm text-secondary-500 dark:text-gray-400">En attente</p>
-            <p className="mt-1 text-3xl font-bold text-secondary-900 dark:text-white">{stats.pending}</p>
+            <p className="mt-1 text-3xl font-bold text-secondary-900 dark:text-white">
+              {stats.pending}
+            </p>
           </div>
           <div className="rounded-xl bg-white p-6 shadow-md dark:bg-gray-800">
             <p className="text-sm text-secondary-500 dark:text-gray-400">En echec</p>
-            <p className={`mt-1 text-3xl font-bold ${stats.failed > 0 ? 'text-danger-600' : 'text-secondary-900 dark:text-white'}`}>
+            <p
+              className={`mt-1 text-3xl font-bold ${stats.failed > 0 ? 'text-danger-600' : 'text-secondary-900 dark:text-white'}`}
+            >
               {stats.failed}
             </p>
           </div>
@@ -120,17 +135,29 @@ export default function QueueDashboard() {
             <table className="min-w-full divide-y divide-secondary-200 dark:divide-gray-700">
               <thead>
                 <tr>
-                  <th className="px-4 py-2 text-left text-xs font-medium uppercase text-secondary-500 dark:text-gray-400">ID</th>
-                  <th className="px-4 py-2 text-left text-xs font-medium uppercase text-secondary-500 dark:text-gray-400">Type</th>
-                  <th className="px-4 py-2 text-left text-xs font-medium uppercase text-secondary-500 dark:text-gray-400">Date</th>
-                  <th className="px-4 py-2 text-right text-xs font-medium uppercase text-secondary-500 dark:text-gray-400">Actions</th>
+                  <th className="px-4 py-2 text-left text-xs font-medium uppercase text-secondary-500 dark:text-gray-400">
+                    ID
+                  </th>
+                  <th className="px-4 py-2 text-left text-xs font-medium uppercase text-secondary-500 dark:text-gray-400">
+                    Type
+                  </th>
+                  <th className="px-4 py-2 text-left text-xs font-medium uppercase text-secondary-500 dark:text-gray-400">
+                    Date
+                  </th>
+                  <th className="px-4 py-2 text-right text-xs font-medium uppercase text-secondary-500 dark:text-gray-400">
+                    Actions
+                  </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-secondary-100 dark:divide-gray-700">
                 {failedMessages.map((msg) => (
                   <tr key={msg.id}>
-                    <td className="px-4 py-3 text-sm text-secondary-900 dark:text-white">#{msg.id}</td>
-                    <td className="px-4 py-3 text-sm text-secondary-600 dark:text-gray-400">{msg.type}</td>
+                    <td className="px-4 py-3 text-sm text-secondary-900 dark:text-white">
+                      #{msg.id}
+                    </td>
+                    <td className="px-4 py-3 text-sm text-secondary-600 dark:text-gray-400">
+                      {msg.type}
+                    </td>
                     <td className="px-4 py-3 text-sm text-secondary-600 dark:text-gray-400">
                       {new Date(msg.createdAt).toLocaleString()}
                     </td>

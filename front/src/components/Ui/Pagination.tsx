@@ -54,7 +54,13 @@ export default function Pagination({ currentPage, totalPages, onPageChange }: Pa
           className="rounded-md px-3 py-1.5 text-sm font-medium text-secondary-600 transition-colors hover:bg-secondary-100 disabled:cursor-not-allowed disabled:opacity-50 dark:text-gray-300 dark:hover:bg-gray-700"
           aria-label="Page precedente"
         >
-          <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <svg
+            className="h-4 w-4"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth={2}
+          >
             <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
           </svg>
         </button>
@@ -93,7 +99,13 @@ export default function Pagination({ currentPage, totalPages, onPageChange }: Pa
           className="rounded-md px-3 py-1.5 text-sm font-medium text-secondary-600 transition-colors hover:bg-secondary-100 disabled:cursor-not-allowed disabled:opacity-50 dark:text-gray-300 dark:hover:bg-gray-700"
           aria-label="Page suivante"
         >
-          <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <svg
+            className="h-4 w-4"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth={2}
+          >
             <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
           </svg>
         </button>

@@ -12,9 +12,7 @@ interface UseApiResult<T> {
 /**
  * Hook generique pour les appels API avec gestion du loading et des erreurs
  */
-export function useApi<T>(
-  apiFunction: (...args: unknown[]) => Promise<T>,
-): UseApiResult<T> {
+export function useApi<T>(apiFunction: (...args: unknown[]) => Promise<T>): UseApiResult<T> {
   const [data, setData] = useState<T | null>(null);
   const [error, setError] = useState<ApiError | null>(null);
   const [isLoading, setIsLoading] = useState(false);

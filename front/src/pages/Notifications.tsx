@@ -93,9 +93,7 @@ export default function Notifications() {
               d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0"
             />
           </svg>
-          <p className="mt-4 text-secondary-500 dark:text-gray-400">
-            {t('notifications.empty')}
-          </p>
+          <p className="mt-4 text-secondary-500 dark:text-gray-400">{t('notifications.empty')}</p>
         </div>
       ) : (
         <div className="space-y-2">
@@ -142,7 +140,13 @@ export default function Notifications() {
                     className="rounded-lg p-1.5 text-secondary-400 hover:bg-secondary-100 hover:text-primary-600 dark:text-gray-500 dark:hover:bg-gray-700 dark:hover:text-primary-400"
                     title={t('notifications.markRead')}
                   >
-                    <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <svg
+                      className="h-4 w-4"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth={2}
+                    >
                       <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                     </svg>
                   </button>
@@ -152,7 +156,13 @@ export default function Notifications() {
                   className="rounded-lg p-1.5 text-secondary-400 hover:bg-danger-50 hover:text-danger-600 dark:text-gray-500 dark:hover:bg-danger-900/20 dark:hover:text-danger-400"
                   title={t('common.delete')}
                 >
-                  <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <svg
+                    className="h-4 w-4"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                  >
                     <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                   </svg>
                 </button>

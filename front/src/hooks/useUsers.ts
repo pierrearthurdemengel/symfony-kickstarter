@@ -24,7 +24,12 @@ interface UseUsersReturn {
   setSearch: (value: string) => void;
   setSortBy: (value: string) => void;
   setSortOrder: (value: SortOrder) => void;
-  fetchUsers: (page?: number, searchTerm?: string, sort?: string, order?: SortOrder) => Promise<void>;
+  fetchUsers: (
+    page?: number,
+    searchTerm?: string,
+    sort?: string,
+    order?: SortOrder,
+  ) => Promise<void>;
   deleteUser: (id: string) => Promise<void>;
   updateUser: (id: string, data: UserUpdateData) => Promise<User>;
 }
@@ -97,15 +102,12 @@ export function useUsers(): UseUsersReturn {
   );
 
   // Suppression d'un utilisateur
-  const deleteUser = useCallback(
-    async (id: string) => {
-      await del(`/users/${id}`);
-      // Rafraichissement de la liste apres suppression
-      setUsers((prev) => prev.filter((u) => u.id !== id));
-      setTotalItems((prev) => prev - 1);
-    },
-    [],
-  );
+  const deleteUser = useCallback(async (id: string) => {
+    await del(`/users/${id}`);
+    // Rafraichissement de la liste apres suppression
+    setUsers((prev) => prev.filter((u) => u.id !== id));
+    setTotalItems((prev) => prev - 1);
+  }, []);
 
   // Mise a jour d'un utilisateur
   const updateUser = useCallback(async (id: string, data: UserUpdateData): Promise<User> => {

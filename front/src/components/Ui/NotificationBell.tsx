@@ -68,7 +68,13 @@ export default function NotificationBell() {
         className="relative rounded-full p-2 text-secondary-600 hover:bg-secondary-100 dark:text-gray-300 dark:hover:bg-gray-700"
         aria-label={t('nav.notifications')}
       >
-        <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+        <svg
+          className="h-5 w-5"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          strokeWidth={2}
+        >
           <path
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -123,7 +129,13 @@ export default function NotificationBell() {
                       TYPE_COLORS[notification.type] || TYPE_COLORS.info
                     }`}
                   >
-                    {notification.type === 'success' ? '✓' : notification.type === 'error' ? '!' : notification.type === 'warning' ? '⚠' : 'i'}
+                    {notification.type === 'success'
+                      ? '✓'
+                      : notification.type === 'error'
+                        ? '!'
+                        : notification.type === 'warning'
+                          ? '⚠'
+                          : 'i'}
                   </span>
 
                   {/* Contenu */}

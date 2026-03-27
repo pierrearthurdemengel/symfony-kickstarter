@@ -18,14 +18,11 @@ export default function Dropdown({ trigger, items }: DropdownProps) {
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   // Fermeture au clic exterieur
-  const handleClickOutside = useCallback(
-    (e: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
-        setIsOpen(false);
-      }
-    },
-    [],
-  );
+  const handleClickOutside = useCallback((e: MouseEvent) => {
+    if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+      setIsOpen(false);
+    }
+  }, []);
 
   // Fermeture avec Escape
   const handleKeyDown = useCallback((e: KeyboardEvent) => {

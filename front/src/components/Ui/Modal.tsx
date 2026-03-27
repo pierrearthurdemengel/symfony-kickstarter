@@ -124,10 +124,7 @@ export default function Modal({ isOpen, onClose, title, children, size = 'md' }:
       >
         {/* En-tete */}
         <div className="flex items-center justify-between border-b border-secondary-200 px-6 py-4 dark:border-gray-700">
-          <h2
-            id="modal-title"
-            className="text-lg font-semibold text-secondary-900 dark:text-white"
-          >
+          <h2 id="modal-title" className="text-lg font-semibold text-secondary-900 dark:text-white">
             {title}
           </h2>
           <button

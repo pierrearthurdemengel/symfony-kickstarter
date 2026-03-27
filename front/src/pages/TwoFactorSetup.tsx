@@ -36,7 +36,7 @@ export default function TwoFactorSetup() {
       setStep('verify');
     } catch (err) {
       const apiError = err as ApiError;
-      addToast('error', apiError.message || 'Erreur lors de l\'activation du 2FA.');
+      addToast('error', apiError.message || "Erreur lors de l'activation du 2FA.");
     } finally {
       setLoading(false);
     }
@@ -68,12 +68,14 @@ export default function TwoFactorSetup() {
             Codes de secours
           </h2>
           <p className="mb-4 text-sm text-secondary-600 dark:text-gray-400">
-            Conservez ces codes dans un endroit sur. Ils vous permettront de vous connecter
-            si vous perdez l&apos;acces a votre application d&apos;authentification.
+            Conservez ces codes dans un endroit sur. Ils vous permettront de vous connecter si vous
+            perdez l&apos;acces a votre application d&apos;authentification.
           </p>
           <div className="mb-6 grid grid-cols-2 gap-2 rounded-lg bg-secondary-50 p-4 font-mono text-sm dark:bg-gray-700">
             {backupCodes.map((bCode) => (
-              <div key={bCode} className="text-secondary-900 dark:text-white">{bCode}</div>
+              <div key={bCode} className="text-secondary-900 dark:text-white">
+                {bCode}
+              </div>
             ))}
           </div>
           <Button onClick={() => navigate('/profile')} className="w-full">
@@ -94,8 +96,8 @@ export default function TwoFactorSetup() {
         {step === 'init' && (
           <>
             <p className="mb-6 text-sm text-secondary-600 dark:text-gray-400">
-              L&apos;authentification a deux facteurs ajoute une couche de securite supplementaire
-              a votre compte en exigeant un code temporaire en plus de votre mot de passe.
+              L&apos;authentification a deux facteurs ajoute une couche de securite supplementaire a
+              votre compte en exigeant un code temporaire en plus de votre mot de passe.
             </p>
             <Button onClick={handleEnable} isLoading={loading} className="w-full">
               Configurer le 2FA
@@ -106,8 +108,8 @@ export default function TwoFactorSetup() {
         {step === 'verify' && (
           <>
             <p className="mb-4 text-sm text-secondary-600 dark:text-gray-400">
-              Scannez le QR code ci-dessous avec votre application d&apos;authentification
-              (Google Authenticator, Authy, etc.), puis entrez le code genere.
+              Scannez le QR code ci-dessous avec votre application d&apos;authentification (Google
+              Authenticator, Authy, etc.), puis entrez le code genere.
             </p>
 
             {/* QR Code via Google Charts API */}

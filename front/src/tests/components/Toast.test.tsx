@@ -9,12 +9,8 @@ function ToastTrigger() {
 
   return (
     <div>
-      <button onClick={() => addToast('success', 'Operation reussie')}>
-        Ajouter succes
-      </button>
-      <button onClick={() => addToast('error', 'Une erreur est survenue')}>
-        Ajouter erreur
-      </button>
+      <button onClick={() => addToast('success', 'Operation reussie')}>Ajouter succes</button>
+      <button onClick={() => addToast('error', 'Une erreur est survenue')}>Ajouter erreur</button>
     </div>
   );
 }

@@ -160,11 +160,7 @@ export default function FileUpload({
       >
         {/* Preview de l'image */}
         {preview ? (
-          <img
-            src={preview}
-            alt="Apercu"
-            className="mb-4 h-24 w-24 rounded-lg object-cover"
-          />
+          <img src={preview} alt="Apercu" className="mb-4 h-24 w-24 rounded-lg object-cover" />
         ) : (
           <svg
             className="mb-3 h-10 w-10 text-secondary-400 dark:text-gray-500"
@@ -181,9 +177,7 @@ export default function FileUpload({
           </svg>
         )}
 
-        <p className="mb-1 text-sm text-secondary-600 dark:text-gray-400">
-          {label}
-        </p>
+        <p className="mb-1 text-sm text-secondary-600 dark:text-gray-400">{label}</p>
         <p className="text-xs text-secondary-400 dark:text-gray-500">
           Glissez-deposez ou cliquez pour parcourir
         </p>
@@ -214,9 +208,7 @@ export default function FileUpload({
       )}
 
       {/* Message d'erreur */}
-      {error && (
-        <p className="mt-2 text-sm text-danger-600 dark:text-danger-400">{error}</p>
-      )}
+      {error && <p className="mt-2 text-sm text-danger-600 dark:text-danger-400">{error}</p>}
     </div>
   );
 }

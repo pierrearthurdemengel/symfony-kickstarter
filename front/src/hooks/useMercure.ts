@@ -1,7 +1,8 @@
 import { useEffect, useRef, useCallback } from 'react';
 
 // URL du hub Mercure, configurable via variable d'environnement
-const MERCURE_HUB_URL = import.meta.env.VITE_MERCURE_URL || 'http://localhost:3001/.well-known/mercure';
+const MERCURE_HUB_URL =
+  import.meta.env.VITE_MERCURE_URL || 'http://localhost:3001/.well-known/mercure';
 
 interface UseMercureOptions<T> {
   topic: string;

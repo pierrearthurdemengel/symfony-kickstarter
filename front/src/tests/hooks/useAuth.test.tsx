@@ -53,9 +53,7 @@ describe('useAuth', () => {
     localStorage.setItem('auth_token', 'fake-token');
 
     // Mock fetch pour qu'il ne resolve pas immediatement
-    vi.spyOn(globalThis, 'fetch').mockImplementation(
-      () => new Promise(() => {}),
-    );
+    vi.spyOn(globalThis, 'fetch').mockImplementation(() => new Promise(() => {}));
 
     renderWithProviders();
 

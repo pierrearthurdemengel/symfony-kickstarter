@@ -38,7 +38,7 @@ export function useAdminStats() {
       });
 
       if (!response.ok) {
-        throw new Error('Erreur lors de l\'export.');
+        throw new Error("Erreur lors de l'export.");
       }
 
       const blob = await response.blob();

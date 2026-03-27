@@ -63,8 +63,19 @@ export default function FeatureFlags() {
       <AdminLayout title="Feature Flags">
         <div className="flex items-center justify-center py-12">
           <svg className="h-8 w-8 animate-spin text-primary-600" fill="none" viewBox="0 0 24 24">
-            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+            <circle
+              className="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              strokeWidth="4"
+            />
+            <path
+              className="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+            />
           </svg>
         </div>
       </AdminLayout>
@@ -76,17 +87,12 @@ export default function FeatureFlags() {
       <div className="rounded-xl bg-white shadow-md dark:bg-gray-800">
         <div className="divide-y divide-secondary-100 dark:divide-gray-700">
           {Object.entries(flags).map(([flag, enabled]) => (
-            <div
-              key={flag}
-              className="flex items-center justify-between px-6 py-4"
-            >
+            <div key={flag} className="flex items-center justify-between px-6 py-4">
               <div>
                 <p className="font-medium text-secondary-900 dark:text-white">
                   {FLAG_LABELS[flag] || flag}
                 </p>
-                <p className="text-sm text-secondary-500 dark:text-gray-400">
-                  {flag}
-                </p>
+                <p className="text-sm text-secondary-500 dark:text-gray-400">{flag}</p>
               </div>
               <button
                 onClick={() => handleToggle(flag)}

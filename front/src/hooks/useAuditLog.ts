@@ -16,9 +16,7 @@ export function useAuditLog() {
     setError(null);
 
     try {
-      const response = await get<AuditLogResponse>(
-        `/admin/audit-logs?page=${page}&limit=${limit}`,
-      );
+      const response = await get<AuditLogResponse>(`/admin/audit-logs?page=${page}&limit=${limit}`);
       setData(response);
     } catch {
       setError("Erreur lors du chargement du journal d'audit.");

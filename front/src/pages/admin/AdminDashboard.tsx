@@ -99,12 +99,7 @@ export default function AdminDashboard() {
     >
       {/* Bouton export */}
       <div className="mb-6 flex justify-end">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={handleExport}
-          isLoading={isExporting}
-        >
+        <Button variant="outline" size="sm" onClick={handleExport} isLoading={isExporting}>
           Exporter CSV
         </Button>
       </div>
@@ -113,9 +108,7 @@ export default function AdminDashboard() {
       <div className="mb-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
         {/* Total utilisateurs */}
         <div className="rounded-xl bg-white p-6 shadow-sm dark:bg-gray-800">
-          <p className="text-sm text-secondary-500 dark:text-gray-400">
-            Utilisateurs
-          </p>
+          <p className="text-sm text-secondary-500 dark:text-gray-400">Utilisateurs</p>
           {statsLoading ? (
             <div className="mt-1 h-7 w-16 animate-pulse rounded bg-secondary-200 dark:bg-gray-700" />
           ) : (
@@ -127,9 +120,7 @@ export default function AdminDashboard() {
 
         {/* Emails verifies */}
         <div className="rounded-xl bg-white p-6 shadow-sm dark:bg-gray-800">
-          <p className="text-sm text-secondary-500 dark:text-gray-400">
-            Emails verifies
-          </p>
+          <p className="text-sm text-secondary-500 dark:text-gray-400">Emails verifies</p>
           {statsLoading ? (
             <div className="mt-1 h-7 w-16 animate-pulse rounded bg-secondary-200 dark:bg-gray-700" />
           ) : (
@@ -141,9 +132,7 @@ export default function AdminDashboard() {
 
         {/* Taux de verification */}
         <div className="rounded-xl bg-white p-6 shadow-sm dark:bg-gray-800">
-          <p className="text-sm text-secondary-500 dark:text-gray-400">
-            Taux de verification
-          </p>
+          <p className="text-sm text-secondary-500 dark:text-gray-400">Taux de verification</p>
           {statsLoading ? (
             <div className="mt-1 h-7 w-16 animate-pulse rounded bg-secondary-200 dark:bg-gray-700" />
           ) : (
@@ -155,9 +144,7 @@ export default function AdminDashboard() {
 
         {/* Nombre de roles admin */}
         <div className="rounded-xl bg-white p-6 shadow-sm dark:bg-gray-800">
-          <p className="text-sm text-secondary-500 dark:text-gray-400">
-            Admins
-          </p>
+          <p className="text-sm text-secondary-500 dark:text-gray-400">Admins</p>
           {statsLoading ? (
             <div className="mt-1 h-7 w-16 animate-pulse rounded bg-secondary-200 dark:bg-gray-700" />
           ) : (
@@ -181,11 +168,7 @@ export default function AdminDashboard() {
             <ResponsiveContainer width="100%" height={250}>
               <BarChart data={stats?.registrationsByMonth ?? []}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-                <XAxis
-                  dataKey="month"
-                  tickFormatter={formatMonth}
-                  tick={{ fontSize: 12 }}
-                />
+                <XAxis dataKey="month" tickFormatter={formatMonth} tick={{ fontSize: 12 }} />
                 <YAxis allowDecimals={false} tick={{ fontSize: 12 }} />
                 <Tooltip
                   labelFormatter={(label) => {
@@ -265,9 +248,7 @@ export default function AdminDashboard() {
             ))}
           </div>
         ) : recentUsers.length === 0 ? (
-          <p className="text-sm text-secondary-500 dark:text-gray-400">
-            Aucun utilisateur
-          </p>
+          <p className="text-sm text-secondary-500 dark:text-gray-400">Aucun utilisateur</p>
         ) : (
           <ul className="divide-y divide-secondary-100 dark:divide-gray-700">
             {recentUsers.map((user) => (
@@ -280,9 +261,7 @@ export default function AdminDashboard() {
                     <p className="text-sm font-medium text-secondary-900 dark:text-white">
                       {user.firstName} {user.lastName}
                     </p>
-                    <p className="text-xs text-secondary-500 dark:text-gray-400">
-                      {user.email}
-                    </p>
+                    <p className="text-xs text-secondary-500 dark:text-gray-400">{user.email}</p>
                   </div>
                 </div>
                 <span className="text-xs text-secondary-400 dark:text-gray-500">

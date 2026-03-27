@@ -60,9 +60,7 @@ export function useNotifications(enablePolling = false): UseNotificationsReturn 
   // Marque une notification comme lue
   const markAsRead = useCallback(async (id: string) => {
     await patch(`/notifications/${id}/read`, {});
-    setNotifications((prev) =>
-      prev.map((n) => (n.id === id ? { ...n, isRead: true } : n)),
-    );
+    setNotifications((prev) => prev.map((n) => (n.id === id ? { ...n, isRead: true } : n)));
     setUnreadCount((prev) => Math.max(0, prev - 1));
   }, []);
 

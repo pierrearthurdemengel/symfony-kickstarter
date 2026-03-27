@@ -41,8 +41,8 @@ export default function Home() {
             Symfony Kickstarter
           </h1>
           <p className="mx-auto mb-10 max-w-2xl text-lg text-primary-100 sm:text-xl">
-            Template de demarrage rapide avec Symfony, API Platform, React et Docker.
-            Tout ce dont vous avez besoin pour lancer votre projet en quelques minutes.
+            Template de demarrage rapide avec Symfony, API Platform, React et Docker. Tout ce dont
+            vous avez besoin pour lancer votre projet en quelques minutes.
           </p>
           <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
             {isAuthenticated ? (
@@ -51,12 +51,7 @@ export default function Home() {
                 className="inline-flex items-center rounded-lg bg-white px-8 py-3 text-lg font-semibold text-primary-600 shadow-lg transition-colors hover:bg-primary-50"
               >
                 Aller au Dashboard
-                <svg
-                  className="ml-2 h-5 w-5"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
+                <svg className="ml-2 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
