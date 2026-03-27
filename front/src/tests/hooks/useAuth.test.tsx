@@ -22,7 +22,7 @@ function AuthConsumer() {
 // Wrapper avec les providers necessaires
 function renderWithProviders() {
   return render(
-    <BrowserRouter>
+    <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
       <AuthProvider>
         <AuthConsumer />
       </AuthProvider>
@@ -94,7 +94,7 @@ describe('useAuth', () => {
 
     expect(() => {
       render(
-        <BrowserRouter>
+        <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
           <BadConsumer />
         </BrowserRouter>,
       );
