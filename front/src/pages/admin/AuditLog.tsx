@@ -119,7 +119,7 @@ export default function AuditLogPage() {
                   colSpan={6}
                   className="px-4 py-8 text-center text-sm text-secondary-500 dark:text-gray-400"
                 >
-                  Aucune entree dans le journal d'audit
+                  Aucune entree dans le journal d&apos;audit
                 </td>
               </tr>
             ) : (

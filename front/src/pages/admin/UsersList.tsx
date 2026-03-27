@@ -278,7 +278,7 @@ export default function UsersList() {
         size="sm"
       >
         <p className="mb-6 text-sm text-secondary-600 dark:text-gray-400">
-          Voulez-vous vraiment supprimer l'utilisateur{' '}
+          Voulez-vous vraiment supprimer l&apos;utilisateur{' '}
           <strong className="text-secondary-900 dark:text-white">
             {deleteModal.user?.email}
           </strong>{' '}

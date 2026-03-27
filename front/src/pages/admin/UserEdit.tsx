@@ -163,7 +163,7 @@ export default function UserEdit() {
                 className="w-full cursor-not-allowed rounded-lg border border-secondary-300 bg-secondary-100 px-3 py-2 text-secondary-900 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-400"
               />
               <p className="mt-1 text-xs text-secondary-500 dark:text-gray-400">
-                L'email ne peut pas etre modifie.
+                L&apos;email ne peut pas etre modifie.
               </p>
             </div>
 

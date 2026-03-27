@@ -198,7 +198,7 @@ export default function UserDetail() {
 
               <div>
                 <dt className="text-sm font-medium text-secondary-500 dark:text-gray-400">
-                  Date d'inscription
+                  Date d&apos;inscription
                 </dt>
                 <dd className="mt-1 text-sm text-secondary-900 dark:text-gray-200">
                   {formatDate(user.createdAt)}
@@ -248,7 +248,7 @@ export default function UserDetail() {
         size="sm"
       >
         <p className="mb-6 text-sm text-secondary-600 dark:text-gray-400">
-          Voulez-vous vraiment supprimer l'utilisateur{' '}
+          Voulez-vous vraiment supprimer l&apos;utilisateur{' '}
           <strong className="text-secondary-900 dark:text-white">{user.email}</strong> ?
           Cette action est irreversible.
         </p>
