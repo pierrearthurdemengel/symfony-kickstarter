@@ -1,6 +1,13 @@
 #!/bin/bash
 # Script d'initialisation pour personnaliser le template Symfony Kickstarter
 # Usage: ./init.sh mon-projet
+#
+# Ce script :
+# 1. Remplace toutes les references a "kickstarter" par le nom de votre projet
+# 2. Met a jour les namespaces, noms de containers, volumes, reseaux
+# 3. Genere un APP_SECRET aleatoire
+# 4. Reinitialise le depot Git
+# 5. Se supprime apres execution
 
 set -e
 
@@ -20,15 +27,17 @@ if [ -z "$1" ]; then
     echo "Exemple: ./init.sh mon-projet"
     echo ""
     echo "Le script remplace '${OLD_NAME}' par le nom de votre projet dans :"
-    echo "  - docker-compose.yaml (noms des containers, volumes, networks)"
-    echo "  - docker-compose.override.yaml (configuration Xdebug)"
-    echo "  - docker-compose.prod.yaml (stack production)"
+    echo "  - docker-compose.yaml, override, prod, monitoring"
     echo "  - api/.env, api/.env.example, api/.env.prod.example"
     echo "  - api/composer.json (namespace)"
     echo "  - front/package.json (name)"
-    echo "  - Makefile (commentaires)"
-    echo "  - README.md (titre, liens)"
+    echo "  - Makefile, README.md, CHANGELOG.md, CONTRIBUTING.md"
     echo "  - Fixtures (domaine email)"
+    echo "  - Scripts de deploiement et backup"
+    echo "  - Workflows GitHub Actions"
+    echo "  - Configuration monitoring (Prometheus, Grafana)"
+    echo ""
+    echo "Il genere aussi un APP_SECRET aleatoire et reinitialise le depot Git."
     exit 1
 fi
 
@@ -57,63 +66,118 @@ COUNT=0
 replace_in_file() {
     local file="$1"
     if [ -f "$file" ]; then
-        sed -i "s/${OLD_NAME}/${NEW_NAME}/g" "$file"
-        echo -e "  ${BLUE}[OK]${NC} $file"
-        COUNT=$((COUNT + 1))
+        if grep -q "${OLD_NAME}" "$file" 2>/dev/null; then
+            sed -i "s/${OLD_NAME}/${NEW_NAME}/g" "$file"
+            echo -e "  ${BLUE}[OK]${NC} $file"
+            COUNT=$((COUNT + 1))
+        fi
     fi
 }
 
-# Docker Compose (dev, override, prod)
+# Fonction de remplacement avec pattern capitalise
+replace_capitalized() {
+    local file="$1"
+    local old_cap="Kickstarter"
+    local new_cap="${NEW_NAME^}"
+    if [ -f "$file" ]; then
+        if grep -q "${old_cap}" "$file" 2>/dev/null; then
+            sed -i "s/${old_cap}/${new_cap}/g" "$file"
+        fi
+    fi
+}
+
+echo -e "${YELLOW}[1/7] Docker Compose${NC}"
 replace_in_file "docker-compose.yaml"
 replace_in_file "docker-compose.override.yaml"
 replace_in_file "docker-compose.prod.yaml"
+replace_in_file "docker-compose.monitoring.yaml"
 
-# Backend - environnement
+echo -e "${YELLOW}[2/7] Backend${NC}"
 replace_in_file "api/.env"
 replace_in_file "api/.env.example"
 replace_in_file "api/.env.prod.example"
 replace_in_file "api/.env.dev"
 
-# Backend - composer.json (namespace)
+# composer.json (namespace)
 if [ -f "api/composer.json" ]; then
     sed -i "s/\"${OLD_NAME}\//\"${NEW_NAME}\//g" api/composer.json
-    sed -i "s/Kickstarter/${NEW_NAME^}/g" api/composer.json
+    replace_capitalized "api/composer.json"
     echo -e "  ${BLUE}[OK]${NC} api/composer.json"
-    COUNT=$((COUNT + 1))
-fi
-
-# Frontend - package.json
-if [ -f "front/package.json" ]; then
-    sed -i "s/symfony-${OLD_NAME}-front/symfony-${NEW_NAME}-front/g" front/package.json
-    echo -e "  ${BLUE}[OK]${NC} front/package.json"
-    COUNT=$((COUNT + 1))
-fi
-
-# Makefile
-if [ -f "Makefile" ]; then
-    sed -i "s/Symfony Kickstarter/Symfony ${NEW_NAME^}/g" Makefile
-    echo -e "  ${BLUE}[OK]${NC} Makefile"
-    COUNT=$((COUNT + 1))
-fi
-
-# README.md
-if [ -f "README.md" ]; then
-    sed -i "s/Symfony Kickstarter/Symfony ${NEW_NAME^}/g" README.md
-    sed -i "s/symfony-kickstarter/symfony-${NEW_NAME}/g" README.md
-    sed -i "s/${OLD_NAME}\.dev/${NEW_NAME}.dev/g" README.md
-    echo -e "  ${BLUE}[OK]${NC} README.md"
     COUNT=$((COUNT + 1))
 fi
 
 # Fixtures (domaine email)
 replace_in_file "api/src/DataFixtures/AppFixtures.php"
 
-# CHANGELOG.md (nom du projet)
+echo -e "${YELLOW}[3/7] Frontend${NC}"
+if [ -f "front/package.json" ]; then
+    sed -i "s/symfony-${OLD_NAME}-front/symfony-${NEW_NAME}-front/g" front/package.json
+    echo -e "  ${BLUE}[OK]${NC} front/package.json"
+    COUNT=$((COUNT + 1))
+fi
+
+echo -e "${YELLOW}[4/7] Documentation${NC}"
+if [ -f "Makefile" ]; then
+    replace_capitalized "Makefile"
+    replace_in_file "Makefile"
+fi
+
+if [ -f "README.md" ]; then
+    replace_capitalized "README.md"
+    sed -i "s/symfony-kickstarter/symfony-${NEW_NAME}/g" README.md
+    sed -i "s/${OLD_NAME}\.dev/${NEW_NAME}.dev/g" README.md
+    echo -e "  ${BLUE}[OK]${NC} README.md"
+    COUNT=$((COUNT + 1))
+fi
+
 if [ -f "CHANGELOG.md" ]; then
-    sed -i "s/Symfony Kickstarter/Symfony ${NEW_NAME^}/g" CHANGELOG.md
+    replace_capitalized "CHANGELOG.md"
     echo -e "  ${BLUE}[OK]${NC} CHANGELOG.md"
     COUNT=$((COUNT + 1))
 fi
+
+if [ -f "CONTRIBUTING.md" ]; then
+    replace_capitalized "CONTRIBUTING.md"
+    sed -i "s/symfony-kickstarter/symfony-${NEW_NAME}/g" CONTRIBUTING.md
+    echo -e "  ${BLUE}[OK]${NC} CONTRIBUTING.md"
+    COUNT=$((COUNT + 1))
+fi
+
+echo -e "${YELLOW}[5/7] Scripts${NC}"
+replace_in_file "scripts/backup-postgres.sh"
+replace_in_file "scripts/restore-postgres.sh"
+replace_in_file "scripts/deploy.sh"
+
+echo -e "${YELLOW}[6/7] Workflows CI/CD${NC}"
+replace_in_file ".github/workflows/ci.yaml"
+replace_in_file ".github/workflows/deploy.yaml"
+replace_in_file ".github/workflows/staging.yaml"
+
+echo -e "${YELLOW}[7/7] Monitoring${NC}"
+replace_in_file "docker/monitoring/prometheus.yml"
+if [ -d "docker/monitoring/grafana" ]; then
+    find docker/monitoring/grafana -type f -name "*.json" -exec sed -i "s/${OLD_NAME}/${NEW_NAME}/g" {} \;
+    echo -e "  ${BLUE}[OK]${NC} docker/monitoring/grafana/"
+    COUNT=$((COUNT + 1))
+fi
+
+# Generation d'un APP_SECRET aleatoire
+echo ""
+echo -e "${YELLOW}Generation d'un APP_SECRET...${NC}"
+APP_SECRET=$(openssl rand -hex 32 2>/dev/null || head -c 64 /dev/urandom | od -An -tx1 | tr -d ' \n' | head -c 64)
+for env_file in api/.env api/.env.example api/.env.prod.example; do
+    if [ -f "$env_file" ]; then
+        if grep -q "APP_SECRET=" "$env_file"; then
+            sed -i "s/APP_SECRET=.*/APP_SECRET=${APP_SECRET}/" "$env_file"
+        fi
+    fi
+done
+echo -e "  ${BLUE}[OK]${NC} APP_SECRET genere"
+
+# Suppression des fichiers de template inutiles
+echo ""
+echo -e "${YELLOW}Nettoyage des fichiers de template...${NC}"
+rm -f docs/adr/ADR-*.md 2>/dev/null && echo -e "  ${BLUE}[OK]${NC} ADRs supprimes (specifiques au template)" || true
 
 # Suppression de l'historique Git du template
 if [ -d ".git" ]; then

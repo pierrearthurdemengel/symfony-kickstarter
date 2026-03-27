@@ -4,6 +4,55 @@ Toutes les modifications notables de ce projet sont documentees dans ce fichier.
 
 Le format est base sur [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/).
 
+## [1.0.0] - 2026-03-27
+
+### Ajoute
+
+#### DevOps - Deploiement
+- Docker Compose production avec healthchecks sur tous les services (nginx, php, database, redis)
+- Healthchecks Kubernetes-ready : liveness probe (GET /api/healthcheck/live) et readiness probe (GET /api/healthcheck) distincts
+- Script de deploiement zero-downtime avec rollback automatique (scripts/deploy.sh)
+- Script de backup PostgreSQL automatise avec rotation et retention 30 jours (scripts/backup-postgres.sh)
+- Script de restauration PostgreSQL avec verification d'integrite (scripts/restore-postgres.sh)
+- Support envoi des backups vers stockage distant S3 (option --upload-s3)
+
+#### DevOps - Monitoring
+- Stack monitoring Prometheus + Grafana (docker-compose.monitoring.yaml)
+- Exporteurs metriques : node-exporter (systeme), postgres-exporter (base), redis-exporter (cache)
+- Regles d'alerting Prometheus (CPU, memoire, disque, PostgreSQL, Redis, healthcheck applicatif)
+- Dashboard Grafana pre-configure (CPU, memoire, disque, connexions PostgreSQL, memoire Redis)
+- Provisioning automatique datasource Prometheus et dashboards dans Grafana
+
+#### DevOps - CI/CD
+- Workflow GitHub Actions staging (build automatique sur PR avec annulation des jobs precedents)
+- Workflow deploy enrichi (rollback automatise, smoke test post-deploiement, notifications Slack/Discord)
+- Commandes Makefile : backup, backup-s3, restore, monitoring-start, monitoring-stop, deploy
+
+#### Documentation
+- ADR-001 : PostgreSQL vs MySQL
+- ADR-002 : Vite vs Webpack
+- ADR-003 : JWT vs Sessions
+- ADR-004 : API Platform vs FOSRestBundle
+- ADR-005 : Tailwind CSS vs Bootstrap/Material
+- ADR-006 : Monorepo vs repos separes
+- ADR-007 : Redis vs Memcached
+- Guide de deploiement detaille (DigitalOcean, Coolify, Caprover, Kubernetes)
+- Guide de personnalisation (methode script + methode manuelle)
+- Guide de migration zero-downtime (regles Doctrine pour la production)
+- Diagramme d'architecture C4 (contexte, conteneurs, flux auth, ERD, monitoring)
+- FAQ des problemes courants (Docker, permissions, JWT, CORS, base de donnees, tests)
+- Guide de contribution enrichi (setup local complet, process de review, conventions detaillees)
+- Script init.sh complet (monitoring, workflows, scripts, generation APP_SECRET)
+
+### Modifie
+
+- HealthcheckController : version 1.0.0, endpoint liveness separe (/api/healthcheck/live)
+- docker-compose.prod.yaml : healthchecks avec depends_on condition: service_healthy
+- deploy.yaml : jobs rollback et notification, smoke test post-deploiement
+- init.sh : couverture complete (monitoring, scripts, workflows, APP_SECRET auto-genere)
+- CONTRIBUTING.md : guide enrichi (setup local, process review, conventions detaillees)
+- Makefile : commandes backup, monitoring, deploy
+
 ## [0.9.0] - 2026-03-27
 
 ### Ajoute
