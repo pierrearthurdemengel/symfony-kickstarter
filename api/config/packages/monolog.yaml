@@ -2,6 +2,8 @@
 monolog:
   channels:
     - deprecation
+    - audit
+    - security
 
 when@dev:
   monolog:
@@ -11,6 +13,18 @@ when@dev:
         path: "%kernel.logs_dir%/%kernel.environment%.log"
         level: debug
         channels: ["!event"]
+      audit:
+        type: stream
+        path: "%kernel.logs_dir%/audit.log"
+        level: info
+        channels: [audit]
+        formatter: monolog.formatter.json
+      security_log:
+        type: stream
+        path: "%kernel.logs_dir%/security.log"
+        level: info
+        channels: [security]
+        formatter: monolog.formatter.json
       console:
         type: console
         process_psr_3_messages: false

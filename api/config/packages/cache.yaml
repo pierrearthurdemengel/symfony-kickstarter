@@ -11,3 +11,9 @@ framework:
         adapter: cache.app
       doctrine.system_cache_pool:
         adapter: cache.system
+      cache.api:
+        adapter: cache.app
+        default_lifetime: 300
+      cache.search:
+        adapter: cache.app
+        default_lifetime: 60
