@@ -69,7 +69,7 @@ final class UserTest extends WebTestCase
         /** @var User|null $user */
         $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => $email]);
 
-        return (string) ($user?->getId());
+        return (string) $user?->getId();
     }
 
     public function testGetCollectionAuthenticated(): void
@@ -77,7 +77,7 @@ final class UserTest extends WebTestCase
         $token = $this->createUserAndGetToken('list@test.dev');
 
         $this->client->request('GET', '/api/users', [], [], [
-            'HTTP_AUTHORIZATION' => 'Bearer ' . $token,
+            'HTTP_AUTHORIZATION' => 'Bearer '.$token,
             'HTTP_ACCEPT' => 'application/ld+json',
         ]);
 
@@ -89,8 +89,8 @@ final class UserTest extends WebTestCase
         $token = $this->createUserAndGetToken('single@test.dev');
         $userId = $this->getUserIdByEmail('single@test.dev');
 
-        $this->client->request('GET', '/api/users/' . $userId, [], [], [
-            'HTTP_AUTHORIZATION' => 'Bearer ' . $token,
+        $this->client->request('GET', '/api/users/'.$userId, [], [], [
+            'HTTP_AUTHORIZATION' => 'Bearer '.$token,
             'HTTP_ACCEPT' => 'application/ld+json',
         ]);
 
@@ -102,7 +102,7 @@ final class UserTest extends WebTestCase
         $token = $this->createUserAndGetToken('admin@test.dev', 'password', ['ROLE_ADMIN']);
 
         $this->client->request('POST', '/api/users', [], [], [
-            'HTTP_AUTHORIZATION' => 'Bearer ' . $token,
+            'HTTP_AUTHORIZATION' => 'Bearer '.$token,
             'CONTENT_TYPE' => 'application/ld+json',
             'HTTP_ACCEPT' => 'application/ld+json',
         ], (string) json_encode([
@@ -120,8 +120,8 @@ final class UserTest extends WebTestCase
         $token = $this->createUserAndGetToken('owner@test.dev');
         $userId = $this->getUserIdByEmail('owner@test.dev');
 
-        $this->client->request('PATCH', '/api/users/' . $userId, [], [], [
-            'HTTP_AUTHORIZATION' => 'Bearer ' . $token,
+        $this->client->request('PATCH', '/api/users/'.$userId, [], [], [
+            'HTTP_AUTHORIZATION' => 'Bearer '.$token,
             'CONTENT_TYPE' => 'application/merge-patch+json',
             'HTTP_ACCEPT' => 'application/ld+json',
         ], (string) json_encode([
@@ -152,8 +152,8 @@ final class UserTest extends WebTestCase
 
         $deleteUserId = (string) $userToDelete->getId();
 
-        $this->client->request('DELETE', '/api/users/' . $deleteUserId, [], [], [
-            'HTTP_AUTHORIZATION' => 'Bearer ' . $token,
+        $this->client->request('DELETE', '/api/users/'.$deleteUserId, [], [], [
+            'HTTP_AUTHORIZATION' => 'Bearer '.$token,
             'HTTP_ACCEPT' => 'application/ld+json',
         ]);
 

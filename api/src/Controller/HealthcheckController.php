@@ -4,12 +4,15 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use DateTimeImmutable;
+use DateTimeInterface;
 use Doctrine\DBAL\Connection;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Contracts\Cache\CacheInterface;
+use Throwable;
 
 final class HealthcheckController extends AbstractController
 {
@@ -27,14 +30,14 @@ final class HealthcheckController extends AbstractController
             'redis' => $this->checkRedis(),
         ];
 
-        $allOk = !in_array('error', $checks, true);
+        $allOk = !\in_array('error', $checks, true);
 
         $statusCode = $allOk ? Response::HTTP_OK : Response::HTTP_SERVICE_UNAVAILABLE;
 
         return $this->json([
             'status' => $allOk ? 'ok' : 'degraded',
             'checks' => $checks,
-            'timestamp' => (new \DateTimeImmutable())->format(\DateTimeInterface::ATOM),
+            'timestamp' => (new DateTimeImmutable())->format(DateTimeInterface::ATOM),
             'version' => '0.5.0',
         ], $statusCode);
     }
@@ -48,7 +51,7 @@ final class HealthcheckController extends AbstractController
             $this->connection->executeQuery('SELECT 1');
 
             return 'ok';
-        } catch (\Throwable) {
+        } catch (Throwable) {
             return 'error';
         }
     }
@@ -59,12 +62,12 @@ final class HealthcheckController extends AbstractController
     private function checkRedis(): string
     {
         try {
-            $this->cache->get('healthcheck_ping', function (): string {
+            $this->cache->get('healthcheck_ping', static function (): string {
                 return 'pong';
             });
 
             return 'ok';
-        } catch (\Throwable) {
+        } catch (Throwable) {
             return 'error';
         }
     }

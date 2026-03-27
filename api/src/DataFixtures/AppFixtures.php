@@ -67,13 +67,13 @@ final class AppFixtures extends Fixture
         // 50 utilisateurs generes avec des donnees realistes
         $usedEmails = ['admin@kickstarter.dev', 'user@kickstarter.dev'];
 
-        for ($i = 0; $i < 50; $i++) {
+        for ($i = 0; $i < 50; ++$i) {
             $firstName = self::FIRST_NAMES[$i % \count(self::FIRST_NAMES)];
             $lastName = self::LAST_NAMES[$i % \count(self::LAST_NAMES)];
-            $email = strtolower($firstName) . '.' . strtolower($lastName) . ($i > 0 ? (string) $i : '') . '@example.com';
+            $email = strtolower($firstName).'.'.strtolower($lastName).($i > 0 ? (string) $i : '').'@example.com';
 
-            if (in_array($email, $usedEmails, true)) {
-                $email = strtolower($firstName) . '.' . strtolower($lastName) . '.' . $i . '@example.com';
+            if (\in_array($email, $usedEmails, true)) {
+                $email = strtolower($firstName).'.'.strtolower($lastName).'.'.$i.'@example.com';
             }
 
             $usedEmails[] = $email;

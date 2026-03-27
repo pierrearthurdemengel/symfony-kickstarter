@@ -6,6 +6,7 @@ namespace App\Controller;
 
 use App\Entity\MediaObject;
 use App\Entity\User;
+use DateTimeInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -61,11 +62,11 @@ final class MediaUploadController extends AbstractController
         $originalName = $file->getClientOriginalName();
         $extension = $file->guessExtension() ?? 'bin';
         $fileSize = (int) $file->getSize();
-        $uniqueName = Uuid::v7()->toRfc4122() . '.' . $extension;
+        $uniqueName = Uuid::v7()->toRfc4122().'.'.$extension;
 
         /** @var string $projectDir */
         $projectDir = $this->getParameter('kernel.project_dir');
-        $uploadDir = $projectDir . '/var/uploads';
+        $uploadDir = $projectDir.'/var/uploads';
         if (!is_dir($uploadDir)) {
             mkdir($uploadDir, 0755, true);
         }
@@ -90,7 +91,7 @@ final class MediaUploadController extends AbstractController
             'originalName' => $media->getOriginalName(),
             'mimeType' => $media->getMimeType(),
             'size' => $media->getSize(),
-            'createdAt' => $media->getCreatedAt()?->format(\DateTimeInterface::ATOM),
+            'createdAt' => $media->getCreatedAt()?->format(DateTimeInterface::ATOM),
         ], Response::HTTP_CREATED);
     }
 }

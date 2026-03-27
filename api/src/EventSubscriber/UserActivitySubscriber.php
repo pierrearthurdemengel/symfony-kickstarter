@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\EventSubscriber;
 
 use App\Entity\User;
+use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Event\AuthenticationSuccessEvent;
 use Lexik\Bundle\JWTAuthenticationBundle\Events;
@@ -39,7 +40,7 @@ final readonly class UserActivitySubscriber implements EventSubscriberInterface
             'email' => $user->getEmail(),
         ]);
 
-        $user->setLastLoginAt(new \DateTimeImmutable());
+        $user->setLastLoginAt(new DateTimeImmutable());
         $this->entityManager->flush();
     }
 }

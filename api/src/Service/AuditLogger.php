@@ -39,12 +39,12 @@ final readonly class AuditLogger
         $log->setChanges($changes);
 
         $user = $this->security->getUser();
-        if ($user !== null) {
+        if (null !== $user) {
             $log->setPerformedBy($user->getUserIdentifier());
         }
 
         $request = $this->requestStack->getCurrentRequest();
-        if ($request !== null) {
+        if (null !== $request) {
             $log->setIpAddress($request->getClientIp());
         }
 

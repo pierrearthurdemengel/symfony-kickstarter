@@ -6,11 +6,11 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Repository\AuditLogRepository;
+use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Serializer\SerializerInterface;
@@ -59,7 +59,7 @@ final class AdminController extends AbstractController
              WHERE created_at >= :since
              GROUP BY TO_CHAR(created_at, 'YYYY-MM')
              ORDER BY month ASC",
-            ['since' => (new \DateTimeImmutable('-12 months'))->format('Y-m-d H:i:s')],
+            ['since' => (new DateTimeImmutable('-12 months'))->format('Y-m-d H:i:s')],
         );
 
         // Repartition des roles
@@ -90,7 +90,7 @@ final class AdminController extends AbstractController
                 ? round(($verifiedUsers / $totalUsers) * 100, 1)
                 : 0,
             'registrationsByMonth' => array_map(
-                fn (array $row): array => [
+                static fn (array $row): array => [
                     'month' => $row['month'],
                     'count' => (int) $row['count'],
                 ],
@@ -114,7 +114,7 @@ final class AdminController extends AbstractController
             ->getQuery()
             ->getResult();
 
-        $response = new StreamedResponse(function () use ($users): void {
+        $response = new StreamedResponse(static function () use ($users): void {
             /** @var resource $handle */
             $handle = fopen('php://output', 'w');
 
@@ -147,7 +147,7 @@ final class AdminController extends AbstractController
             fclose($handle);
         });
 
-        $filename = 'utilisateurs_' . date('Ymd_His') . '.csv';
+        $filename = 'utilisateurs_'.date('Ymd_His').'.csv';
         $response->headers->set('Content-Type', 'text/csv; charset=UTF-8');
         $response->headers->set('Content-Disposition', "attachment; filename=\"{$filename}\"");
 

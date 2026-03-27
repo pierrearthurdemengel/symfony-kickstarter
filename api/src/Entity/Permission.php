@@ -12,7 +12,7 @@ use Symfony\Component\Uid\Uuid;
 
 /**
  * Permission granulaire du systeme RBAC.
- * Exemples : users.read, users.create, audit.read, export.users
+ * Exemples : users.read, users.create, audit.read, export.users.
  */
 #[ORM\Entity(repositoryClass: PermissionRepository::class)]
 #[ORM\Table(name: 'permission')]

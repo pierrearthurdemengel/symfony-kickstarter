@@ -55,7 +55,7 @@ final class TwoFactorController extends AbstractController
 
         // Construction de l'URI otpauth pour le QR code
         $issuer = 'Kickstarter';
-        $otpauthUri = sprintf(
+        $otpauthUri = \sprintf(
             'otpauth://totp/%s:%s?secret=%s&issuer=%s&algorithm=SHA1&digits=6&period=%d',
             rawurlencode($issuer),
             rawurlencode((string) $user->getEmail()),
@@ -255,7 +255,7 @@ final class TwoFactorController extends AbstractController
             (\ord($hash[$offset + 3]) & 0xFF)
         ) % 1000000;
 
-        return str_pad((string) $code, 6, '0', STR_PAD_LEFT);
+        return str_pad((string) $code, 6, '0', \STR_PAD_LEFT);
     }
 
     /**
@@ -271,7 +271,7 @@ final class TwoFactorController extends AbstractController
 
         for ($i = 0, $len = \strlen($base32); $i < $len; ++$i) {
             $val = strpos($base32Chars, $base32[$i]);
-            if ($val === false) {
+            if (false === $val) {
                 continue;
             }
             $buffer = ($buffer << 5) | $val;

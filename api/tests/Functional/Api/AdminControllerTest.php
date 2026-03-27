@@ -68,7 +68,7 @@ final class AdminControllerTest extends WebTestCase
         $token = $this->createUserAndGetToken('user-stats@test.dev');
 
         $this->client->request('GET', '/api/admin/stats', [], [], [
-            'HTTP_AUTHORIZATION' => 'Bearer ' . $token,
+            'HTTP_AUTHORIZATION' => 'Bearer '.$token,
         ]);
 
         self::assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
@@ -79,7 +79,7 @@ final class AdminControllerTest extends WebTestCase
         $token = $this->createUserAndGetToken('admin-stats@test.dev', ['ROLE_ADMIN']);
 
         $this->client->request('GET', '/api/admin/stats', [], [], [
-            'HTTP_AUTHORIZATION' => 'Bearer ' . $token,
+            'HTTP_AUTHORIZATION' => 'Bearer '.$token,
         ]);
 
         self::assertResponseStatusCodeSame(Response::HTTP_OK);
@@ -97,7 +97,7 @@ final class AdminControllerTest extends WebTestCase
         $token = $this->createUserAndGetToken('user-export@test.dev');
 
         $this->client->request('GET', '/api/admin/users/export', [], [], [
-            'HTTP_AUTHORIZATION' => 'Bearer ' . $token,
+            'HTTP_AUTHORIZATION' => 'Bearer '.$token,
         ]);
 
         self::assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
@@ -108,7 +108,7 @@ final class AdminControllerTest extends WebTestCase
         $token = $this->createUserAndGetToken('admin-export@test.dev', ['ROLE_ADMIN']);
 
         $this->client->request('GET', '/api/admin/users/export', [], [], [
-            'HTTP_AUTHORIZATION' => 'Bearer ' . $token,
+            'HTTP_AUTHORIZATION' => 'Bearer '.$token,
         ]);
 
         self::assertResponseStatusCodeSame(Response::HTTP_OK);
@@ -121,7 +121,7 @@ final class AdminControllerTest extends WebTestCase
         $token = $this->createUserAndGetToken('user-audit@test.dev');
 
         $this->client->request('GET', '/api/admin/audit-logs', [], [], [
-            'HTTP_AUTHORIZATION' => 'Bearer ' . $token,
+            'HTTP_AUTHORIZATION' => 'Bearer '.$token,
         ]);
 
         self::assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
@@ -132,7 +132,7 @@ final class AdminControllerTest extends WebTestCase
         $token = $this->createUserAndGetToken('admin-audit@test.dev', ['ROLE_ADMIN']);
 
         $this->client->request('GET', '/api/admin/audit-logs', [], [], [
-            'HTTP_AUTHORIZATION' => 'Bearer ' . $token,
+            'HTTP_AUTHORIZATION' => 'Bearer '.$token,
         ]);
 
         self::assertResponseStatusCodeSame(Response::HTTP_OK);

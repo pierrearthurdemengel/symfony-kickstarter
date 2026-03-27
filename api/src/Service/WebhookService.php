@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+use DateTimeImmutable;
 use Psr\Log\LoggerInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
+use Throwable;
 
 /**
  * Service de dispatch de webhooks.
@@ -29,7 +31,7 @@ final readonly class WebhookService
         try {
             $body = [
                 'event' => $event,
-                'timestamp' => (new \DateTimeImmutable())->format('c'),
+                'timestamp' => (new DateTimeImmutable())->format('c'),
                 'data' => $payload,
             ];
 
@@ -40,7 +42,7 @@ final readonly class WebhookService
 
             // Signature HMAC-SHA256 si un secret est fourni
             if (null !== $secret) {
-                $signature = hash_hmac('sha256', (string) json_encode($body, JSON_THROW_ON_ERROR), $secret);
+                $signature = hash_hmac('sha256', (string) json_encode($body, \JSON_THROW_ON_ERROR), $secret);
                 $headers['X-Webhook-Signature'] = $signature;
             }
 
@@ -62,7 +64,7 @@ final readonly class WebhookService
             ]);
 
             return false;
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             $this->logger->error('Echec webhook {event} vers {url} : {message}', [
                 'event' => $event,
                 'url' => $url,

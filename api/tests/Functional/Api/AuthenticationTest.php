@@ -120,7 +120,7 @@ final class AuthenticationTest extends WebTestCase
 
         // Acces a un endpoint protege
         $this->client->request('GET', '/api/users', [], [], [
-            'HTTP_AUTHORIZATION' => 'Bearer ' . $token,
+            'HTTP_AUTHORIZATION' => 'Bearer '.$token,
             'HTTP_ACCEPT' => 'application/ld+json',
         ]);
 

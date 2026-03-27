@@ -6,6 +6,7 @@ namespace App\Tests\Functional\Api;
 
 use App\Entity\ResetPasswordToken;
 use App\Entity\User;
+use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -57,9 +58,9 @@ final class ResetPasswordTest extends WebTestCase
         $token->setToken(bin2hex(random_bytes(32)));
 
         if ($expired) {
-            $token->setExpiresAt(new \DateTimeImmutable('-1 hour'));
+            $token->setExpiresAt(new DateTimeImmutable('-1 hour'));
         } else {
-            $token->setExpiresAt(new \DateTimeImmutable('+1 hour'));
+            $token->setExpiresAt(new DateTimeImmutable('+1 hour'));
         }
 
         $this->entityManager->persist($token);

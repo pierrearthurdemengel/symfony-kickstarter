@@ -8,6 +8,7 @@ use Doctrine\DBAL\Connection;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Attribute\Route;
+use Throwable;
 
 /**
  * Dashboard de monitoring des files d'attente Messenger.
@@ -69,7 +70,7 @@ final class QueueDashboardController extends AbstractController
             }
 
             return $this->json($result);
-        } catch (\Throwable) {
+        } catch (Throwable) {
             return $this->json([]);
         }
     }
@@ -87,12 +88,12 @@ final class QueueDashboardController extends AbstractController
                 ['id' => $id],
             );
 
-            if ($updated === 0) {
+            if (0 === $updated) {
                 return $this->json(['error' => 'Message introuvable.'], 404);
             }
 
             return $this->json(['message' => 'Message remis en file d\'attente.']);
-        } catch (\Throwable) {
+        } catch (Throwable) {
             return $this->json(['error' => 'Erreur lors de la retentative.'], 500);
         }
     }
@@ -100,15 +101,15 @@ final class QueueDashboardController extends AbstractController
     private function countMessages(string $queueName, bool $delivered): int
     {
         try {
-            $sql = "SELECT COUNT(*) FROM messenger_messages WHERE queue_name = :queue";
+            $sql = 'SELECT COUNT(*) FROM messenger_messages WHERE queue_name = :queue';
             if ($delivered) {
-                $sql .= " AND delivered_at IS NOT NULL";
+                $sql .= ' AND delivered_at IS NOT NULL';
             } else {
-                $sql .= " AND delivered_at IS NULL";
+                $sql .= ' AND delivered_at IS NULL';
             }
 
             return (int) $this->connection->fetchOne($sql, ['queue' => $queueName]);
-        } catch (\Throwable) {
+        } catch (Throwable) {
             return 0;
         }
     }
@@ -119,7 +120,7 @@ final class QueueDashboardController extends AbstractController
             return (int) $this->connection->fetchOne(
                 "SELECT COUNT(*) FROM messenger_messages WHERE delivered_at IS NOT NULL AND delivered_at >= NOW() - INTERVAL '1 hour'",
             );
-        } catch (\Throwable) {
+        } catch (Throwable) {
             return 0;
         }
     }

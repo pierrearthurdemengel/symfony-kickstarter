@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Entity;
 
 use App\Entity\User;
+use DateTimeImmutable;
 use PHPUnit\Framework\TestCase;
 
 final class UserTest extends TestCase
@@ -81,8 +82,8 @@ final class UserTest extends TestCase
         $user = new User();
         $user->setCreatedAtValue();
 
-        self::assertInstanceOf(\DateTimeImmutable::class, $user->getCreatedAt());
-        self::assertInstanceOf(\DateTimeImmutable::class, $user->getUpdatedAt());
+        self::assertInstanceOf(DateTimeImmutable::class, $user->getCreatedAt());
+        self::assertInstanceOf(DateTimeImmutable::class, $user->getUpdatedAt());
     }
 
     public function testSetUpdatedAtValue(): void
@@ -95,7 +96,7 @@ final class UserTest extends TestCase
         usleep(1000);
         $user->setUpdatedAtValue();
 
-        self::assertInstanceOf(\DateTimeImmutable::class, $user->getUpdatedAt());
+        self::assertInstanceOf(DateTimeImmutable::class, $user->getUpdatedAt());
     }
 
     public function testPlainPassword(): void
@@ -113,7 +114,7 @@ final class UserTest extends TestCase
     public function testSetAndGetDates(): void
     {
         $user = new User();
-        $now = new \DateTimeImmutable();
+        $now = new DateTimeImmutable();
 
         $user->setCreatedAt($now);
         $user->setUpdatedAt($now);

@@ -8,6 +8,7 @@ use App\Entity\Notification;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
+use Throwable;
 
 /**
  * Service de creation de notifications utilisateur.
@@ -99,7 +100,7 @@ final readonly class NotificationService
                 'link' => $notification->getLink(),
                 'createdAt' => $notification->getCreatedAt()->format('c'),
             ]);
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             // Mercure indisponible : la notification est deja en base, pas de perte
             $this->logger->warning('Echec de publication Mercure : {message}', [
                 'message' => $e->getMessage(),

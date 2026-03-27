@@ -6,6 +6,7 @@ namespace App\Service;
 
 use Psr\Log\LoggerInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
+use Throwable;
 
 /**
  * Service de recherche via Meilisearch.
@@ -25,6 +26,7 @@ final readonly class SearchService
      * Recherche dans un index Meilisearch.
      *
      * @param array<string, mixed> $options Options supplementaires (limit, offset, filter, sort)
+     *
      * @return array{hits: list<array<string, mixed>>, estimatedTotalHits: int, processingTimeMs: int}
      */
     public function search(string $index, string $query, array $options = []): array
@@ -44,7 +46,7 @@ final readonly class SearchService
             $data = $response->toArray();
 
             return $data;
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             $this->logger->error('Erreur Meilisearch : {message}', ['message' => $e->getMessage()]);
 
             return ['hits' => [], 'estimatedTotalHits' => 0, 'processingTimeMs' => 0];
@@ -66,7 +68,7 @@ final readonly class SearchService
                 ],
                 'json' => [$document],
             ]);
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             $this->logger->warning('Echec indexation Meilisearch : {message}', ['message' => $e->getMessage()]);
         }
     }
@@ -90,7 +92,7 @@ final readonly class SearchService
                 ],
                 'json' => $documents,
             ]);
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             $this->logger->warning('Echec indexation batch Meilisearch : {message}', ['message' => $e->getMessage()]);
         }
     }
@@ -106,7 +108,7 @@ final readonly class SearchService
                     'Authorization' => "Bearer {$this->meilisearchApiKey}",
                 ],
             ]);
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             $this->logger->warning('Echec suppression Meilisearch : {message}', ['message' => $e->getMessage()]);
         }
     }
@@ -139,7 +141,7 @@ final readonly class SearchService
                     'json' => $sortableAttributes,
                 ]);
             }
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             $this->logger->warning('Echec configuration index Meilisearch : {message}', ['message' => $e->getMessage()]);
         }
     }

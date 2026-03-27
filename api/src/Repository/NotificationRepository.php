@@ -6,6 +6,7 @@ namespace App\Repository;
 
 use App\Entity\Notification;
 use App\Entity\User;
+use DateTimeImmutable;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -86,7 +87,7 @@ final class NotificationRepository extends ServiceEntityRepository
         return (int) $this->createQueryBuilder('n')
             ->delete()
             ->where('n.createdAt < :date')
-            ->setParameter('date', new \DateTimeImmutable("-{$days} days"))
+            ->setParameter('date', new DateTimeImmutable("-{$days} days"))
             ->getQuery()
             ->execute();
     }

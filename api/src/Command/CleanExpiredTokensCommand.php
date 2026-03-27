@@ -6,6 +6,7 @@ namespace App\Command;
 
 use App\Entity\EmailVerificationToken;
 use App\Entity\ResetPasswordToken;
+use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -44,7 +45,7 @@ class CleanExpiredTokensCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
         $dryRun = (bool) $input->getOption('dry-run');
-        $now = new \DateTimeImmutable();
+        $now = new DateTimeImmutable();
 
         // Nettoyage des tokens de reset de mot de passe
         $resetCount = $this->cleanTokens(
@@ -63,14 +64,14 @@ class CleanExpiredTokensCommand extends Command
         $total = $resetCount + $verifyCount;
 
         if ($dryRun) {
-            $io->note(sprintf(
+            $io->note(\sprintf(
                 '[DRY-RUN] %d token(s) a supprimer (%d reset password, %d verification email)',
                 $total,
                 $resetCount,
                 $verifyCount,
             ));
         } else {
-            $io->success(sprintf(
+            $io->success(\sprintf(
                 '%d token(s) expire(s) supprime(s) (%d reset password, %d verification email)',
                 $total,
                 $resetCount,
@@ -88,7 +89,7 @@ class CleanExpiredTokensCommand extends Command
      */
     private function cleanTokens(
         string $entityClass,
-        \DateTimeImmutable $now,
+        DateTimeImmutable $now,
         bool $dryRun,
     ): int {
         $qb = $this->entityManager->createQueryBuilder();

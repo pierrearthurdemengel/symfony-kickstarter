@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Entity\AuditLog;
+use DateTimeImmutable;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -51,7 +52,7 @@ class AuditLogRepository extends ServiceEntityRepository
      */
     public function countByAction(int $days = 30): array
     {
-        $since = new \DateTimeImmutable("-{$days} days");
+        $since = new DateTimeImmutable("-{$days} days");
 
         /** @var array<int, array{action: string, total: string}> $results */
         $results = $this->createQueryBuilder('a')
@@ -63,7 +64,7 @@ class AuditLogRepository extends ServiceEntityRepository
             ->getResult();
 
         return array_map(
-            fn (array $row): array => ['action' => $row['action'], 'total' => (int) $row['total']],
+            static fn (array $row): array => ['action' => $row['action'], 'total' => (int) $row['total']],
             $results,
         );
     }
@@ -73,7 +74,7 @@ class AuditLogRepository extends ServiceEntityRepository
      */
     public function deleteOlderThan(int $days): int
     {
-        $before = new \DateTimeImmutable("-{$days} days");
+        $before = new DateTimeImmutable("-{$days} days");
 
         return (int) $this->createQueryBuilder('a')
             ->delete()

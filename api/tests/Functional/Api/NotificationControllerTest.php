@@ -101,7 +101,7 @@ final class NotificationControllerTest extends WebTestCase
         $this->createNotification($user, 'Notification 2');
 
         $this->client->request('GET', '/api/notifications', [], [], [
-            'HTTP_AUTHORIZATION' => 'Bearer ' . $token,
+            'HTTP_AUTHORIZATION' => 'Bearer '.$token,
         ]);
 
         self::assertResponseStatusCodeSame(Response::HTTP_OK);
@@ -121,7 +121,7 @@ final class NotificationControllerTest extends WebTestCase
         $this->createNotification($user);
 
         $this->client->request('GET', '/api/notifications/unread-count', [], [], [
-            'HTTP_AUTHORIZATION' => 'Bearer ' . $token,
+            'HTTP_AUTHORIZATION' => 'Bearer '.$token,
         ]);
 
         self::assertResponseStatusCodeSame(Response::HTTP_OK);
@@ -136,15 +136,15 @@ final class NotificationControllerTest extends WebTestCase
 
         $notification = $this->createNotification($user);
 
-        $this->client->request('PATCH', '/api/notifications/' . $notification->getId() . '/read', [], [], [
-            'HTTP_AUTHORIZATION' => 'Bearer ' . $token,
+        $this->client->request('PATCH', '/api/notifications/'.$notification->getId().'/read', [], [], [
+            'HTTP_AUTHORIZATION' => 'Bearer '.$token,
         ]);
 
         self::assertResponseStatusCodeSame(Response::HTTP_OK);
 
         // Verification du compteur non lu
         $this->client->request('GET', '/api/notifications/unread-count', [], [], [
-            'HTTP_AUTHORIZATION' => 'Bearer ' . $token,
+            'HTTP_AUTHORIZATION' => 'Bearer '.$token,
         ]);
 
         $response = json_decode((string) $this->client->getResponse()->getContent(), true);
@@ -160,7 +160,7 @@ final class NotificationControllerTest extends WebTestCase
         $this->createNotification($user, 'Notif C');
 
         $this->client->request('POST', '/api/notifications/mark-all-read', [], [], [
-            'HTTP_AUTHORIZATION' => 'Bearer ' . $token,
+            'HTTP_AUTHORIZATION' => 'Bearer '.$token,
         ]);
 
         self::assertResponseStatusCodeSame(Response::HTTP_OK);
@@ -175,8 +175,8 @@ final class NotificationControllerTest extends WebTestCase
 
         $notification = $this->createNotification($user);
 
-        $this->client->request('DELETE', '/api/notifications/' . $notification->getId(), [], [], [
-            'HTTP_AUTHORIZATION' => 'Bearer ' . $token,
+        $this->client->request('DELETE', '/api/notifications/'.$notification->getId(), [], [], [
+            'HTTP_AUTHORIZATION' => 'Bearer '.$token,
         ]);
 
         self::assertResponseStatusCodeSame(Response::HTTP_NO_CONTENT);
@@ -190,8 +190,8 @@ final class NotificationControllerTest extends WebTestCase
         $notification = $this->createNotification($userB);
 
         // L'utilisateur A essaie de lire la notification de B
-        $this->client->request('PATCH', '/api/notifications/' . $notification->getId() . '/read', [], [], [
-            'HTTP_AUTHORIZATION' => 'Bearer ' . $tokenA,
+        $this->client->request('PATCH', '/api/notifications/'.$notification->getId().'/read', [], [], [
+            'HTTP_AUTHORIZATION' => 'Bearer '.$tokenA,
         ]);
 
         self::assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);

@@ -6,6 +6,7 @@ namespace App\Tests\Functional\Api;
 
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
+use RuntimeException;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -64,15 +65,15 @@ final class MediaUploadTest extends WebTestCase
     private function createTestImage(string $name = 'test.jpg', string $mimeType = 'image/jpeg', int $sizeKb = 10): UploadedFile
     {
         $tempFile = tempnam(sys_get_temp_dir(), 'media_test_');
-        if ($tempFile === false) {
-            throw new \RuntimeException('Impossible de creer un fichier temporaire.');
+        if (false === $tempFile) {
+            throw new RuntimeException('Impossible de creer un fichier temporaire.');
         }
 
-        if ($mimeType === 'image/jpeg') {
+        if ('image/jpeg' === $mimeType) {
             // JPEG minimal valide : SOI + APP0 (JFIF) + SOF0 + SOS + EOI
-            $jpeg = "\xFF\xD8\xFF\xE0" . pack('n', 16) . "JFIF\x00\x01\x01\x00\x00\x01\x00\x01\x00\x00";
-            $jpeg .= "\xFF\xC0" . pack('n', 11) . "\x08\x00\x01\x00\x01\x01\x01\x11\x00";
-            $jpeg .= "\xFF\xDA" . pack('n', 8) . "\x01\x01\x00\x00\x3F\x00\x7F\x50";
+            $jpeg = "\xFF\xD8\xFF\xE0".pack('n', 16)."JFIF\x00\x01\x01\x00\x00\x01\x00\x01\x00\x00";
+            $jpeg .= "\xFF\xC0".pack('n', 11)."\x08\x00\x01\x00\x01\x01\x01\x11\x00";
+            $jpeg .= "\xFF\xDA".pack('n', 8)."\x01\x01\x00\x00\x3F\x00\x7F\x50";
             $jpeg .= "\xFF\xD9";
             file_put_contents($tempFile, $jpeg);
 
@@ -81,7 +82,7 @@ final class MediaUploadTest extends WebTestCase
             $targetSize = $sizeKb * 1024;
             if ($targetSize > $currentSize) {
                 $handle = fopen($tempFile, 'a');
-                if ($handle !== false) {
+                if (false !== $handle) {
                     fwrite($handle, str_repeat("\0", $targetSize - $currentSize));
                     fclose($handle);
                 }
@@ -100,7 +101,7 @@ final class MediaUploadTest extends WebTestCase
         $file = $this->createTestImage();
 
         $this->client->request('POST', '/api/media', [], ['file' => $file], [
-            'HTTP_AUTHORIZATION' => 'Bearer ' . $token,
+            'HTTP_AUTHORIZATION' => 'Bearer '.$token,
         ]);
 
         self::assertResponseStatusCodeSame(Response::HTTP_CREATED);
@@ -121,7 +122,7 @@ final class MediaUploadTest extends WebTestCase
         $file = $this->createTestImage('large.jpg', 'image/jpeg', 11 * 1024);
 
         $this->client->request('POST', '/api/media', [], ['file' => $file], [
-            'HTTP_AUTHORIZATION' => 'Bearer ' . $token,
+            'HTTP_AUTHORIZATION' => 'Bearer '.$token,
         ]);
 
         self::assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
@@ -137,7 +138,7 @@ final class MediaUploadTest extends WebTestCase
         $file = $this->createTestImage('script.exe', 'application/x-executable');
 
         $this->client->request('POST', '/api/media', [], ['file' => $file], [
-            'HTTP_AUTHORIZATION' => 'Bearer ' . $token,
+            'HTTP_AUTHORIZATION' => 'Bearer '.$token,
         ]);
 
         self::assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);

@@ -29,7 +29,7 @@ final readonly class SendWelcomeEmailHandler
     {
         $user = $this->entityManager->getRepository(User::class)->find(Uuid::fromString($message->getUserId()));
 
-        if ($user === null) {
+        if (null === $user) {
             $this->logger->warning('Utilisateur introuvable pour l\'envoi de l\'email de bienvenue.', [
                 'userId' => $message->getUserId(),
             ]);

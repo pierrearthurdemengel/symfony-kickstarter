@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Repository\PermissionGroupRepository;
+use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -14,7 +15,7 @@ use Symfony\Component\Uid\Uuid;
 
 /**
  * Groupe de permissions assignable aux utilisateurs.
- * Exemples : Manager, Support, Editeur
+ * Exemples : Manager, Support, Editeur.
  */
 #[ORM\Entity(repositoryClass: PermissionGroupRepository::class)]
 #[ORM\Table(name: 'permission_group')]
@@ -44,12 +45,12 @@ class PermissionGroup
 
     #[ORM\Column(type: 'datetime_immutable')]
     #[Groups(['permission_group:read'])]
-    private \DateTimeImmutable $createdAt;
+    private DateTimeImmutable $createdAt;
 
     public function __construct()
     {
         $this->permissions = new ArrayCollection();
-        $this->createdAt = new \DateTimeImmutable();
+        $this->createdAt = new DateTimeImmutable();
     }
 
     public function getId(): ?Uuid
@@ -103,7 +104,7 @@ class PermissionGroup
         return $this;
     }
 
-    public function getCreatedAt(): \DateTimeImmutable
+    public function getCreatedAt(): DateTimeImmutable
     {
         return $this->createdAt;
     }

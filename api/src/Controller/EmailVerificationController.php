@@ -33,7 +33,7 @@ final class EmailVerificationController extends AbstractController
     {
         $tokenValue = $request->query->getString('token', '');
 
-        if ($tokenValue === '') {
+        if ('' === $tokenValue) {
             return $this->json(
                 ['error' => 'Le parametre "token" est requis.'],
                 Response::HTTP_BAD_REQUEST,
@@ -42,7 +42,7 @@ final class EmailVerificationController extends AbstractController
 
         $token = $this->tokenRepository->findValidToken($tokenValue);
 
-        if ($token === null) {
+        if (null === $token) {
             return $this->json(
                 ['error' => 'Token invalide ou expire.'],
                 Response::HTTP_BAD_REQUEST,
@@ -50,7 +50,7 @@ final class EmailVerificationController extends AbstractController
         }
 
         $user = $token->getUser();
-        if ($user === null) {
+        if (null === $user) {
             return $this->json(
                 ['error' => 'Utilisateur introuvable.'],
                 Response::HTTP_BAD_REQUEST,
@@ -106,7 +106,7 @@ final class EmailVerificationController extends AbstractController
 
         /** @var string $frontendUrl */
         $frontendUrl = $this->getParameter('app.frontend_url');
-        $verificationUrl = $frontendUrl . '/api/verify-email?token=' . $token->getToken();
+        $verificationUrl = $frontendUrl.'/api/verify-email?token='.$token->getToken();
 
         $htmlContent = $this->twig->render('emails/verify_email.html.twig', [
             'user' => $user,

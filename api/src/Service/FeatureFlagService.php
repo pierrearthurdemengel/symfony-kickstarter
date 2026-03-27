@@ -52,7 +52,7 @@ final class FeatureFlagService
     public function getAllFlags(): array
     {
         /** @var array<string, bool> $flags */
-        $flags = $this->cache->get(self::CACHE_KEY, function (ItemInterface $item): array {
+        $flags = $this->cache->get(self::CACHE_KEY, static function (ItemInterface $item): array {
             $item->expiresAfter(self::CACHE_TTL);
 
             return self::DEFAULT_FLAGS;
@@ -70,7 +70,7 @@ final class FeatureFlagService
         $flags[$flag] = $enabled;
 
         $this->cache->delete(self::CACHE_KEY);
-        $this->cache->get(self::CACHE_KEY, function (ItemInterface $item) use ($flags): array {
+        $this->cache->get(self::CACHE_KEY, static function (ItemInterface $item) use ($flags): array {
             $item->expiresAfter(self::CACHE_TTL);
 
             return $flags;

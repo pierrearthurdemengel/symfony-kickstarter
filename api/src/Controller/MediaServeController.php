@@ -17,7 +17,7 @@ final class MediaServeController extends AbstractController
     {
         /** @var string $projectDir */
         $projectDir = $this->getParameter('kernel.project_dir');
-        $filePath = $projectDir . '/var/uploads/' . $filename;
+        $filePath = $projectDir.'/var/uploads/'.$filename;
 
         if (!file_exists($filePath)) {
             return $this->json(

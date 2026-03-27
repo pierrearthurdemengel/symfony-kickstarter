@@ -48,9 +48,9 @@ final readonly class RateLimiterSubscriber implements EventSubscriberInterface
 
         // Limiter specifique par route
         $limiterKey = self::ROUTE_LIMITERS[$route] ?? null;
-        if ($limiterKey !== null) {
+        if (null !== $limiterKey) {
             $factory = $this->getSpecificLimiter($limiterKey);
-            if ($factory !== null) {
+            if (null !== $factory) {
                 $limit = $factory->create($clientIp)->consume();
                 if (!$limit->isAccepted()) {
                     $event->setResponse($this->createRateLimitResponse($limit));

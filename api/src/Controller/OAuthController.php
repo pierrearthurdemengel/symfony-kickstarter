@@ -16,6 +16,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
+use Throwable;
 
 /**
  * Endpoints OAuth pour l'authentification sociale (Google, GitHub).
@@ -59,7 +60,7 @@ final class OAuthController extends AbstractController
                 'google' => $this->getGoogleUser($code, $redirectUri),
                 'github' => $this->getGithubUser($code),
             };
-        } catch (\Throwable) {
+        } catch (Throwable) {
             return $this->json(
                 ['error' => 'Erreur lors de l\'authentification OAuth.'],
                 Response::HTTP_BAD_REQUEST,
@@ -163,7 +164,7 @@ final class OAuthController extends AbstractController
 
         // Recuperation du profil
         $profileResponse = $this->httpClient->request('GET', 'https://www.googleapis.com/oauth2/v2/userinfo', [
-            'headers' => ['Authorization' => 'Bearer ' . $accessToken],
+            'headers' => ['Authorization' => 'Bearer '.$accessToken],
         ]);
 
         /** @var array{id: string, email: string, given_name?: string, family_name?: string} $profile */
@@ -203,7 +204,7 @@ final class OAuthController extends AbstractController
         // Recuperation du profil
         $profileResponse = $this->httpClient->request('GET', 'https://api.github.com/user', [
             'headers' => [
-                'Authorization' => 'Bearer ' . $accessToken,
+                'Authorization' => 'Bearer '.$accessToken,
                 'Accept' => 'application/json',
             ],
         ]);
@@ -216,7 +217,7 @@ final class OAuthController extends AbstractController
         if ('' === $email) {
             $emailsResponse = $this->httpClient->request('GET', 'https://api.github.com/user/emails', [
                 'headers' => [
-                    'Authorization' => 'Bearer ' . $accessToken,
+                    'Authorization' => 'Bearer '.$accessToken,
                     'Accept' => 'application/json',
                 ],
             ]);
@@ -246,7 +247,7 @@ final class OAuthController extends AbstractController
     {
         $clientId = $this->getParameter('app.google_client_id');
 
-        return 'https://accounts.google.com/o/oauth2/v2/auth?' . http_build_query([
+        return 'https://accounts.google.com/o/oauth2/v2/auth?'.http_build_query([
             'client_id' => $clientId,
             'redirect_uri' => $redirectUri,
             'response_type' => 'code',
@@ -259,7 +260,7 @@ final class OAuthController extends AbstractController
     {
         $clientId = $this->getParameter('app.github_client_id');
 
-        return 'https://github.com/login/oauth/authorize?' . http_build_query([
+        return 'https://github.com/login/oauth/authorize?'.http_build_query([
             'client_id' => $clientId,
             'scope' => 'user:email read:user',
         ]);

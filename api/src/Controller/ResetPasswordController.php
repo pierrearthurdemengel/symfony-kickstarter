@@ -7,6 +7,7 @@ namespace App\Controller;
 use App\Entity\ResetPasswordToken;
 use App\Repository\ResetPasswordTokenRepository;
 use App\Repository\UserRepository;
+use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -46,13 +47,13 @@ final class ResetPasswordController extends AbstractController
 
         $user = $this->userRepository->findOneBy(['email' => $data['email']]);
 
-        if ($user !== null) {
+        if (null !== $user) {
             $token = bin2hex(random_bytes(32));
 
             $resetToken = new ResetPasswordToken();
             $resetToken->setUser($user);
             $resetToken->setToken($token);
-            $resetToken->setExpiresAt(new \DateTimeImmutable('+1 hour'));
+            $resetToken->setExpiresAt(new DateTimeImmutable('+1 hour'));
 
             $this->entityManager->persist($resetToken);
             $this->entityManager->flush();
@@ -91,13 +92,13 @@ final class ResetPasswordController extends AbstractController
 
         $resetToken = $this->resetPasswordTokenRepository->findValidToken($data['token']);
 
-        if ($resetToken === null) {
+        if (null === $resetToken) {
             return $this->json(['error' => 'Token invalide ou expire.'], Response::HTTP_BAD_REQUEST);
         }
 
         $user = $resetToken->getUser();
 
-        if ($user === null) {
+        if (null === $user) {
             return $this->json(['error' => 'Token invalide ou expire.'], Response::HTTP_BAD_REQUEST);
         }
 

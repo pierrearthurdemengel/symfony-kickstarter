@@ -13,6 +13,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Throwable;
 
 /**
  * Endpoints d'impersonation admin.
@@ -96,7 +97,7 @@ final class ImpersonationController extends AbstractController
         try {
             /** @var array{impersonator?: string} $payload */
             $payload = $this->jwtManager->parse($tokenString);
-        } catch (\Throwable) {
+        } catch (Throwable) {
             return $this->json(['error' => 'Token invalide.'], Response::HTTP_BAD_REQUEST);
         }
 

@@ -6,6 +6,7 @@ namespace App\Tests\Functional\Api;
 
 use App\Entity\EmailVerificationToken;
 use App\Entity\User;
+use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -76,7 +77,7 @@ final class EmailVerificationTest extends WebTestCase
         $token->setToken($tokenValue ?? Uuid::v7()->toRfc4122());
 
         if ($expired) {
-            $token->setExpiresAt(new \DateTimeImmutable('-1 hour'));
+            $token->setExpiresAt(new DateTimeImmutable('-1 hour'));
         }
 
         $this->entityManager->persist($token);
@@ -91,7 +92,7 @@ final class EmailVerificationTest extends WebTestCase
         $tokenValue = Uuid::v7()->toRfc4122();
         $this->createVerificationToken($user, $tokenValue);
 
-        $this->client->request('GET', '/api/verify-email?token=' . $tokenValue);
+        $this->client->request('GET', '/api/verify-email?token='.$tokenValue);
 
         self::assertResponseStatusCodeSame(Response::HTTP_OK);
 
@@ -117,7 +118,7 @@ final class EmailVerificationTest extends WebTestCase
         $token = $this->getJwtToken('resend@test.dev');
 
         $this->client->request('POST', '/api/resend-verification', [], [], [
-            'HTTP_AUTHORIZATION' => 'Bearer ' . $token,
+            'HTTP_AUTHORIZATION' => 'Bearer '.$token,
             'CONTENT_TYPE' => 'application/json',
         ]);
 

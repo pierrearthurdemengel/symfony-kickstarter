@@ -7,6 +7,7 @@ namespace App\Controller;
 use App\Entity\Notification;
 use App\Entity\User;
 use App\Service\AuditLogger;
+use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -66,7 +67,7 @@ final class GdprController extends AbstractController
                 'lastLoginAt' => $user->getLastLoginAt()?->format('c'),
             ],
             'notifications' => $notificationData,
-            'exportDate' => (new \DateTimeImmutable())->format('c'),
+            'exportDate' => (new DateTimeImmutable())->format('c'),
         ];
 
         $this->auditLogger->log('gdpr_export', 'User', (string) $user->getId());

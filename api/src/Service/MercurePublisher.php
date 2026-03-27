@@ -28,7 +28,7 @@ final readonly class MercurePublisher
     {
         $update = new Update(
             $topics,
-            (string) json_encode($data, JSON_THROW_ON_ERROR),
+            (string) json_encode($data, \JSON_THROW_ON_ERROR),
             $private,
         );
 
@@ -43,7 +43,7 @@ final readonly class MercurePublisher
     public function publishUserNotification(string $userId, array $notification): void
     {
         $this->publish(
-            sprintf('/users/%s/notifications', $userId),
+            \sprintf('/users/%s/notifications', $userId),
             $notification,
         );
     }
