@@ -20,7 +20,7 @@ jobs:
 
     steps:
       - name: Checkout du code source
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Build de l'image PHP
         run: docker build -f docker/php/Dockerfile.prod -t kickstarter-php:pr-${{ github.event.pull_request.number }} .

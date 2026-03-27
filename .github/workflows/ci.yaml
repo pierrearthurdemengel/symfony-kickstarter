@@ -49,7 +49,7 @@ jobs:
 
     steps:
       - name: Checkout du code source
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Installation de PHP ${{ matrix.php-version }}
         uses: shivammathur/setup-php@v2
@@ -115,7 +115,7 @@ jobs:
 
     steps:
       - name: Checkout du code source
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Installation de Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
@@ -156,7 +156,7 @@ jobs:
 
     steps:
       - name: Checkout du code source
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Installation de Node.js
         uses: actions/setup-node@v4
@@ -176,7 +176,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout du code source
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Installation de PHP
         uses: shivammathur/setup-php@v2
