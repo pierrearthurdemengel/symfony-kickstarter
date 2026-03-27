@@ -48,7 +48,7 @@ final readonly class RefreshTokenService
         $refreshToken = new RefreshToken();
         $refreshToken->setUser($user);
         $refreshToken->setToken(bin2hex(random_bytes(64)));
-        $refreshToken->setExpiresAt(new DateTimeImmutable(sprintf('+%d seconds', self::DEFAULT_TTL)));
+        $refreshToken->setExpiresAt(new DateTimeImmutable(\sprintf('+%d seconds', self::DEFAULT_TTL)));
 
         $request = $this->requestStack->getCurrentRequest();
         if (null !== $request) {

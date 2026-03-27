@@ -140,7 +140,7 @@ final class TokenControllerTest extends WebTestCase
         // Deconnexion
         $this->client->request('POST', '/api/logout', [], [], [
             'CONTENT_TYPE' => 'application/json',
-            'HTTP_AUTHORIZATION' => 'Bearer ' . $loginResponse['token'],
+            'HTTP_AUTHORIZATION' => 'Bearer '.$loginResponse['token'],
         ], (string) json_encode([
             'refresh_token' => $loginResponse['refresh_token'],
         ]));

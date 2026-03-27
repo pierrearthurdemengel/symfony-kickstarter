@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Service;
 
 use Psr\Log\LoggerInterface;
+use Redis;
 
 /**
  * Gestion de la blacklist des access tokens JWT revoques via Redis.
@@ -15,7 +16,7 @@ final readonly class TokenBlacklistService
     private const string PREFIX = 'jwt_blacklist:';
 
     public function __construct(
-        private \Redis $redis,
+        private Redis $redis,
         private LoggerInterface $logger,
     ) {
     }
@@ -30,11 +31,11 @@ final readonly class TokenBlacklistService
             return;
         }
 
-        $key = self::PREFIX . $tokenIdentifier;
+        $key = self::PREFIX.$tokenIdentifier;
         $this->redis->setex($key, $ttl, '1');
 
         $this->logger->info('Access token blackliste.', [
-            'identifier' => substr($tokenIdentifier, 0, 8) . '...',
+            'identifier' => substr($tokenIdentifier, 0, 8).'...',
             'ttl' => $ttl,
         ]);
     }
@@ -44,7 +45,7 @@ final readonly class TokenBlacklistService
      */
     public function isBlacklisted(string $tokenIdentifier): bool
     {
-        $key = self::PREFIX . $tokenIdentifier;
+        $key = self::PREFIX.$tokenIdentifier;
 
         return (bool) $this->redis->exists($key);
     }

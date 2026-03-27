@@ -53,7 +53,7 @@ final class SafeUploadValidator
 
         // Verification de la taille
         if ($file->getSize() > self::MAX_FILE_SIZE) {
-            $errors[] = sprintf(
+            $errors[] = \sprintf(
                 'Le fichier depasse la taille maximale autorisee (%d Mo).',
                 self::MAX_FILE_SIZE / (1024 * 1024),
             );
@@ -62,7 +62,7 @@ final class SafeUploadValidator
         // Verification de l'extension
         $extension = strtolower($file->getClientOriginalExtension());
         if (\in_array($extension, self::BLOCKED_EXTENSIONS, true)) {
-            $errors[] = sprintf('L\'extension ".%s" n\'est pas autorisee.', $extension);
+            $errors[] = \sprintf('L\'extension ".%s" n\'est pas autorisee.', $extension);
         }
 
         // Verification du type MIME reel (finfo, pas l'extension)
@@ -70,7 +70,7 @@ final class SafeUploadValidator
         $allowedMimes = $this->getAllowedMimeTypes($allowedCategories);
 
         if (null === $realMimeType || !\in_array($realMimeType, $allowedMimes, true)) {
-            $errors[] = sprintf(
+            $errors[] = \sprintf(
                 'Type de fichier non autorise : "%s". Types acceptes : %s.',
                 $realMimeType ?? 'inconnu',
                 implode(', ', $allowedMimes),
@@ -78,7 +78,7 @@ final class SafeUploadValidator
         }
 
         // Verification de la coherence extension/MIME
-        if (null !== $realMimeType && \count($errors) === 0) {
+        if (null !== $realMimeType && 0 === \count($errors)) {
             $declaredMime = $file->getClientMimeType();
             if (null !== $declaredMime && $declaredMime !== $realMimeType) {
                 $errors[] = 'Le type MIME declare ne correspond pas au contenu reel du fichier.';
