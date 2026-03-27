@@ -66,10 +66,7 @@ export default function AuditLogPage() {
   return (
     <AdminLayout
       title="Journal d'audit"
-      breadcrumb={[
-        { label: 'Admin', to: '/admin' },
-        { label: "Journal d'audit" },
-      ]}
+      breadcrumb={[{ label: 'Admin', to: '/admin' }, { label: "Journal d'audit" }]}
     >
       {error && (
         <div className="mb-4 rounded-lg bg-danger-50 p-4 text-sm text-danger-700 dark:bg-danger-900/20 dark:text-danger-400">
@@ -124,17 +121,12 @@ export default function AuditLogPage() {
               </tr>
             ) : (
               data?.items.map((entry: AuditLogEntry) => (
-                <tr
-                  key={entry.id}
-                  className="hover:bg-secondary-50 dark:hover:bg-gray-700/50"
-                >
+                <tr key={entry.id} className="hover:bg-secondary-50 dark:hover:bg-gray-700/50">
                   <td className="whitespace-nowrap px-4 py-3 text-xs text-secondary-600 dark:text-gray-400">
                     {formatDateTime(entry.createdAt)}
                   </td>
                   <td className="px-4 py-3">
-                    <Badge variant={actionBadge(entry.action)}>
-                      {actionLabel(entry.action)}
-                    </Badge>
+                    <Badge variant={actionBadge(entry.action)}>{actionLabel(entry.action)}</Badge>
                   </td>
                   <td className="px-4 py-3 text-sm text-secondary-900 dark:text-white">
                     <span className="font-medium">{entry.entityType}</span>

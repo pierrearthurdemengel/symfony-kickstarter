@@ -63,7 +63,7 @@ export default function UserEdit() {
     };
 
     fetchUser();
-  }, [id]);// eslint-disable-line react-hooks/exhaustive-deps
+  }, [id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Gestion du toggle d'un role
   const handleRoleToggle = (role: string) => {
@@ -125,7 +125,10 @@ export default function UserEdit() {
       breadcrumb={[
         { label: 'Admin', to: '/admin' },
         { label: 'Utilisateurs', to: '/admin/users' },
-        { label: `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.email, to: `/admin/users/${user.id}` },
+        {
+          label: `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.email,
+          to: `/admin/users/${user.id}`,
+        },
         { label: 'Modifier' },
       ]}
     >

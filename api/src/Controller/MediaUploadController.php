@@ -44,6 +44,15 @@ final class MediaUploadController extends AbstractController
             );
         }
 
+        // Verification de la taille en priorite (evite la detection MIME sur les gros fichiers)
+        $fileSize = $file->getSize();
+        if (false === $fileSize || $fileSize > self::MAX_FILE_SIZE) {
+            return $this->json(
+                ['error' => 'Le fichier depasse la taille maximale autorisee de 10 Mo.'],
+                Response::HTTP_BAD_REQUEST,
+            );
+        }
+
         $mimeType = $file->getMimeType() ?? '';
         if (!\in_array($mimeType, self::ALLOWED_MIME_TYPES, true)) {
             return $this->json(
@@ -52,16 +61,8 @@ final class MediaUploadController extends AbstractController
             );
         }
 
-        if ($file->getSize() > self::MAX_FILE_SIZE) {
-            return $this->json(
-                ['error' => 'Le fichier depasse la taille maximale autorisee de 10 Mo.'],
-                Response::HTTP_BAD_REQUEST,
-            );
-        }
-
         $originalName = $file->getClientOriginalName();
         $extension = $file->guessExtension() ?? 'bin';
-        $fileSize = (int) $file->getSize();
         $uniqueName = Uuid::v7()->toRfc4122().'.'.$extension;
 
         /** @var string $projectDir */

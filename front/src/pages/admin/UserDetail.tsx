@@ -36,7 +36,7 @@ export default function UserDetail() {
     };
 
     fetchUser();
-  }, [id]);// eslint-disable-line react-hooks/exhaustive-deps
+  }, [id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Suppression de l'utilisateur
   const handleDelete = async () => {
@@ -144,12 +144,8 @@ export default function UserDetail() {
           <div className="border-t border-secondary-200 pt-6 dark:border-gray-700">
             <dl className="grid gap-6 sm:grid-cols-2">
               <div>
-                <dt className="text-sm font-medium text-secondary-500 dark:text-gray-400">
-                  Email
-                </dt>
-                <dd className="mt-1 text-sm text-secondary-900 dark:text-gray-200">
-                  {user.email}
-                </dd>
+                <dt className="text-sm font-medium text-secondary-500 dark:text-gray-400">Email</dt>
+                <dd className="mt-1 text-sm text-secondary-900 dark:text-gray-200">{user.email}</dd>
               </div>
 
               <div>
@@ -162,18 +158,14 @@ export default function UserDetail() {
               </div>
 
               <div>
-                <dt className="text-sm font-medium text-secondary-500 dark:text-gray-400">
-                  Nom
-                </dt>
+                <dt className="text-sm font-medium text-secondary-500 dark:text-gray-400">Nom</dt>
                 <dd className="mt-1 text-sm text-secondary-900 dark:text-gray-200">
                   {user.lastName || '-'}
                 </dd>
               </div>
 
               <div>
-                <dt className="text-sm font-medium text-secondary-500 dark:text-gray-400">
-                  Roles
-                </dt>
+                <dt className="text-sm font-medium text-secondary-500 dark:text-gray-400">Roles</dt>
                 <dd className="mt-1 flex flex-wrap gap-1">
                   {user.roles.map((role) => (
                     <Badge key={role} variant={roleBadgeVariant(role)}>
@@ -227,9 +219,7 @@ export default function UserDetail() {
 
           {/* Boutons d'action */}
           <div className="mt-8 flex flex-wrap gap-3 border-t border-secondary-200 pt-6 dark:border-gray-700">
-            <Button onClick={() => navigate(`/admin/users/${user.id}/edit`)}>
-              Modifier
-            </Button>
+            <Button onClick={() => navigate(`/admin/users/${user.id}/edit`)}>Modifier</Button>
             <Button variant="danger" onClick={() => setDeleteModalOpen(true)}>
               Supprimer
             </Button>
@@ -249,19 +239,14 @@ export default function UserDetail() {
       >
         <p className="mb-6 text-sm text-secondary-600 dark:text-gray-400">
           Voulez-vous vraiment supprimer l&apos;utilisateur{' '}
-          <strong className="text-secondary-900 dark:text-white">{user.email}</strong> ?
-          Cette action est irreversible.
+          <strong className="text-secondary-900 dark:text-white">{user.email}</strong> ? Cette
+          action est irreversible.
         </p>
         <div className="flex justify-end space-x-3">
           <Button variant="outline" size="sm" onClick={() => setDeleteModalOpen(false)}>
             Annuler
           </Button>
-          <Button
-            variant="danger"
-            size="sm"
-            onClick={handleDelete}
-            isLoading={isDeleting}
-          >
+          <Button variant="danger" size="sm" onClick={handleDelete} isLoading={isDeleting}>
             Supprimer
           </Button>
         </div>
