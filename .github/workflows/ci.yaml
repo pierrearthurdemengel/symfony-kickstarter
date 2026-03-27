@@ -59,7 +59,7 @@ jobs:
           coverage: xdebug
 
       - name: Cache des dependances Composer
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: api/vendor
           key: composer-${{ runner.os }}-${{ matrix.php-version }}-${{ hashFiles('api/composer.lock') }}
