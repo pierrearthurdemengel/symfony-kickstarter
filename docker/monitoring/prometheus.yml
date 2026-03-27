@@ -1,0 +1,34 @@
+# Configuration Prometheus pour Symfony Kickstarter
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+rule_files:
+  - "alert-rules.yml"
+
+scrape_configs:
+  # Metriques systeme (CPU, memoire, disque, reseau)
+  - job_name: 'node-exporter'
+    static_configs:
+      - targets: ['node-exporter:9100']
+    scrape_interval: 10s
+
+  # Metriques PostgreSQL (connexions, transactions, taille)
+  - job_name: 'postgres'
+    static_configs:
+      - targets: ['postgres-exporter:9187']
+    scrape_interval: 15s
+
+  # Metriques Redis (memoire, commandes, connexions)
+  - job_name: 'redis'
+    static_configs:
+      - targets: ['redis-exporter:9121']
+    scrape_interval: 10s
+
+  # Healthcheck applicatif (sonde HTTP vers l'API)
+  - job_name: 'app-healthcheck'
+    metrics_path: /api/healthcheck
+    scheme: http
+    static_configs:
+      - targets: ['nginx:80']
+    scrape_interval: 30s

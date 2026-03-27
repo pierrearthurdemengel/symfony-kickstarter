@@ -1,0 +1,99 @@
+# Regles d'alerting Prometheus pour Symfony Kickstarter
+groups:
+  - name: systeme
+    rules:
+      # CPU superieur a 80% pendant plus de 5 minutes
+      - alert: HighCpuUsage
+        expr: 100 - (avg by(instance) (rate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 80
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "CPU eleve ({{ $value }}%)"
+          description: "L'utilisation CPU depasse 80% depuis 5 minutes."
+
+      # Memoire superieure a 85% pendant plus de 5 minutes
+      - alert: HighMemoryUsage
+        expr: (1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) * 100 > 85
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Memoire elevee ({{ $value }}%)"
+          description: "L'utilisation memoire depasse 85% depuis 5 minutes."
+
+      # Espace disque inferieur a 15%
+      - alert: LowDiskSpace
+        expr: (node_filesystem_avail_bytes{mountpoint="/"} / node_filesystem_size_bytes{mountpoint="/"}) * 100 < 15
+        for: 10m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Espace disque faible ({{ $value }}% restant)"
+          description: "Moins de 15% d'espace disque disponible."
+
+  - name: postgresql
+    rules:
+      # Trop de connexions actives (> 80% du max)
+      - alert: PostgresTooManyConnections
+        expr: pg_stat_activity_count > (pg_settings_max_connections * 0.8)
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "PostgreSQL : connexions elevees"
+          description: "Plus de 80% des connexions PostgreSQL sont utilisees."
+
+      # Base de donnees indisponible
+      - alert: PostgresDown
+        expr: pg_up == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "PostgreSQL indisponible"
+          description: "L'instance PostgreSQL ne repond plus."
+
+  - name: redis
+    rules:
+      # Redis indisponible
+      - alert: RedisDown
+        expr: redis_up == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Redis indisponible"
+          description: "L'instance Redis ne repond plus."
+
+      # Memoire Redis superieure a 80%
+      - alert: RedisHighMemory
+        expr: redis_memory_used_bytes / redis_memory_max_bytes * 100 > 80
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Redis : memoire elevee ({{ $value }}%)"
+          description: "L'utilisation memoire Redis depasse 80%."
+
+  - name: application
+    rules:
+      # Healthcheck applicatif en echec
+      - alert: AppHealthcheckFailed
+        expr: probe_success{job="app-healthcheck"} == 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Healthcheck applicatif en echec"
+          description: "L'endpoint /api/healthcheck ne repond plus correctement."
+
+      # Temps de reponse applicatif eleve (> 2 secondes)
+      - alert: HighResponseTime
+        expr: probe_duration_seconds{job="app-healthcheck"} > 2
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Temps de reponse eleve ({{ $value }}s)"
+          description: "Le temps de reponse depasse 2 secondes depuis 5 minutes."

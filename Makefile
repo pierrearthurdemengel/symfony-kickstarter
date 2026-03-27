@@ -219,6 +219,50 @@ smoke-test: ## Smoke tests post-deploiement
 	bash tests/smoke/smoke-test.sh http://localhost:$(NGINX_PORT:-8080)
 
 # ------------------------------------------------------------------
+# Backup
+# ------------------------------------------------------------------
+
+.PHONY: backup
+backup: ## Sauvegarder la base PostgreSQL
+	bash scripts/backup-postgres.sh
+
+.PHONY: backup-s3
+backup-s3: ## Sauvegarder la base et envoyer vers S3
+	bash scripts/backup-postgres.sh --upload-s3
+
+.PHONY: restore
+restore: ## Restaurer la base depuis un backup (usage: make restore FILE=backups/dump.sql.gz)
+	bash scripts/restore-postgres.sh $(FILE)
+
+# ------------------------------------------------------------------
+# Monitoring
+# ------------------------------------------------------------------
+
+.PHONY: monitoring-start
+monitoring-start: ## Demarrer Prometheus + Grafana
+	$(DOCKER_COMPOSE) -f docker-compose.yaml -f docker-compose.monitoring.yaml up -d prometheus grafana node-exporter postgres-exporter redis-exporter
+
+.PHONY: monitoring-stop
+monitoring-stop: ## Arreter le monitoring
+	$(DOCKER_COMPOSE) -f docker-compose.yaml -f docker-compose.monitoring.yaml stop prometheus grafana node-exporter postgres-exporter redis-exporter
+
+.PHONY: monitoring-logs
+monitoring-logs: ## Logs du monitoring
+	$(DOCKER_COMPOSE) -f docker-compose.yaml -f docker-compose.monitoring.yaml logs -f prometheus grafana
+
+# ------------------------------------------------------------------
+# Deploiement
+# ------------------------------------------------------------------
+
+.PHONY: deploy
+deploy: ## Deployer en production (backup + build + migrate + restart)
+	bash scripts/deploy.sh
+
+.PHONY: deploy-no-backup
+deploy-no-backup: ## Deployer sans backup prealable
+	bash scripts/deploy.sh --no-backup
+
+# ------------------------------------------------------------------
 # Nettoyage
 # ------------------------------------------------------------------
 

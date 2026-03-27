@@ -13,7 +13,14 @@ services:
       - static_files:/var/www/front/dist:ro
       - ./api/public:/var/www/api/public:ro
     depends_on:
-      - php
+      php:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO /dev/null http://localhost/api/healthcheck/live || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
     networks:
       - kickstarter
 
@@ -29,8 +36,16 @@ services:
       APP_ENV: prod
       APP_DEBUG: 0
     depends_on:
-      - database
-      - redis
+      database:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "php-fpm-healthcheck || php -r 'exit(is_resource(fsockopen(\"127.0.0.1\", 9000)) ? 0 : 1);'"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
     networks:
       - kickstarter
 
@@ -44,6 +59,12 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD doit etre defini}
     volumes:
       - database_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-kickstarter} -d ${POSTGRES_DB:-kickstarter}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
     networks:
       - kickstarter
 
@@ -51,6 +72,12 @@ services:
     image: redis:7-alpine
     container_name: kickstarter-redis-prod
     restart: always
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
     networks:
       - kickstarter
 

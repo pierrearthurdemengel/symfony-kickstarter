@@ -1,0 +1,13 @@
+# Provisioning automatique des dashboards Grafana
+apiVersion: 1
+
+providers:
+  - name: 'Kickstarter'
+    orgId: 1
+    folder: 'Kickstarter'
+    type: file
+    disableDeletion: false
+    editable: true
+    options:
+      path: /etc/grafana/provisioning/dashboards/json
+      foldersFromFilesStructure: false

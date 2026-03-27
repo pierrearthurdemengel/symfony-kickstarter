@@ -75,12 +75,73 @@ jobs:
   #     - name: Checkout
   #       uses: actions/checkout@v4
   #
-  #     # Adapter selon l'infrastructure :
-  #     # - VPS : SSH + docker compose pull && docker compose up -d
-  #     # - Kubernetes : kubectl apply / helm upgrade
-  #     # - Fly.io : flyctl deploy
-  #     # - Railway / Render : auto-deploy via webhook
+  #     - name: Deploy via SSH
+  #       uses: appleboy/ssh-action@v1
+  #       with:
+  #         host: ${{ secrets.DEPLOY_HOST }}
+  #         username: ${{ secrets.DEPLOY_USER }}
+  #         key: ${{ secrets.DEPLOY_SSH_KEY }}
+  #         script: |
+  #           cd /opt/kickstarter
+  #           git pull origin main
+  #           ./scripts/deploy.sh
   #
-  #     - name: Deploy via SSH (exemple VPS)
+  #     - name: Smoke test post-deploiement
   #       run: |
-  #         echo "A configurer selon votre infrastructure"
+  #         sleep 10
+  #         HEALTH=$(curl -s -o /dev/null -w "%{http_code}" https://${{ secrets.DEPLOY_DOMAIN }}/api/healthcheck)
+  #         if [ "$HEALTH" != "200" ]; then
+  #           echo "Healthcheck failed (HTTP $HEALTH), triggering rollback..."
+  #           exit 1
+  #         fi
+  #         echo "Healthcheck OK (HTTP $HEALTH)"
+  #
+  #     - name: Rollback on failure
+  #       if: failure()
+  #       uses: appleboy/ssh-action@v1
+  #       with:
+  #         host: ${{ secrets.DEPLOY_HOST }}
+  #         username: ${{ secrets.DEPLOY_USER }}
+  #         key: ${{ secrets.DEPLOY_SSH_KEY }}
+  #         script: |
+  #           cd /opt/kickstarter
+  #           git checkout HEAD~1
+  #           docker compose -f docker-compose.prod.yaml up -d
+  #           echo "Rollback effectue"
+
+  # ---------------------------------------------------------------
+  # Job 4 : Notification (Slack ou Discord)
+  # ---------------------------------------------------------------
+  notify:
+    name: Notification
+    needs: [build-and-push]
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      # Exemple Slack :
+      # - name: Notification Slack
+      #   if: failure()
+      #   uses: slackapi/slack-github-action@v1
+      #   with:
+      #     payload: |
+      #       {
+      #         "text": "Deploiement ${{ github.ref_name }} echoue sur ${{ github.repository }}"
+      #       }
+      #   env:
+      #     SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+      # Exemple Discord :
+      # - name: Notification Discord
+      #   if: failure()
+      #   uses: sarisia/actions-status-discord@v1
+      #   with:
+      #     webhook: ${{ secrets.DISCORD_WEBHOOK_URL }}
+      #     title: "Deploiement echoue"
+      #     description: "Le deploiement ${{ github.ref_name }} a echoue."
+      #     color: 0xff0000
+
+      - name: Resume du deploiement
+        run: |
+          echo "Tag: ${{ github.ref_name }}"
+          echo "Status: ${{ needs.build-and-push.result }}"
+          echo "Commit: ${{ github.sha }}"
