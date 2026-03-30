@@ -11,7 +11,7 @@
         "ext-iconv": "*",
         "ext-pdo_pgsql": "*",
         "ext-redis": "*",
-        "api-platform/core": "^3.3",
+        "api-platform/core": "^4.3",
         "doctrine/dbal": "^4.0",
         "doctrine/doctrine-bundle": "^2.12",
         "doctrine/doctrine-migrations-bundle": "^3.3",
