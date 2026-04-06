@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "64401828e157d2a90c20ed049921ee59",
+    "content-hash": "b15878acffcaf7d64c4aaff2403dbfe0",
     "packages": [
         {
             "name": "api-platform/core",
@@ -11216,16 +11216,16 @@
         },
         {
             "name": "symfony/phpunit-bridge",
-            "version": "v7.4.7",
+            "version": "v8.0.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/phpunit-bridge.git",
-                "reference": "53c5a606cb4ae19c9466a5f8ffe60f61b0c93b5f"
+                "reference": "723ea96810135e776110bddb25aeb32b462134c8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/phpunit-bridge/zipball/53c5a606cb4ae19c9466a5f8ffe60f61b0c93b5f",
-                "reference": "53c5a606cb4ae19c9466a5f8ffe60f61b0c93b5f",
+                "url": "https://api.github.com/repos/symfony/phpunit-bridge/zipball/723ea96810135e776110bddb25aeb32b462134c8",
+                "reference": "723ea96810135e776110bddb25aeb32b462134c8",
                 "shasum": ""
             },
             "require": {
@@ -11277,7 +11277,7 @@
                 "testing"
             ],
             "support": {
-                "source": "https://github.com/symfony/phpunit-bridge/tree/v7.4.7"
+                "source": "https://github.com/symfony/phpunit-bridge/tree/v8.0.8"
             },
             "funding": [
                 {
@@ -11297,7 +11297,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-03-04T13:54:41+00:00"
+            "time": "2026-03-30T15:14:47+00:00"
         },
         {
             "name": "symfony/process",
